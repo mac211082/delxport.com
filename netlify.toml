@@ -1,0 +1,24 @@
+# DELxPort — static site (no build step)
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/rice"
+  to = "/delxport-rice.html"
+  status = 301
+[[redirects]]
+  from = "/pulses"
+  to = "/delxport-pulses.html"
+  status = 301
+[[redirects]]
+  from = "/spices"
+  to = "/delxport-spices.html"
+  status = 301
+[[redirects]]
+  from = "/groceries"
+  to = "/delxport-groceries.html"
+  status = 301
+[[redirects]]
+  from = "/hotels"
+  to = "/delxport-hotels.html"
+  status = 301
