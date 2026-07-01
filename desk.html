@@ -42,46 +42,138 @@ input:focus,select:focus{outline:none;border-color:var(--gold)}
 .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
 .top .muted{cursor:pointer}
 .setup{background:rgba(224,137,74,.1);border:1px solid rgba(224,137,74,.4);color:#e9b98c;border-radius:12px;padding:16px;font-size:14px}
+.sitehead{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 20px;background:rgba(23,20,15,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.sitehead .brand{margin:0;font-size:18px}
+.sitehead .sub{font-family:'Space Grotesk',sans-serif;color:var(--mut);font-weight:400;font-size:13px;margin-left:2px}
+.acctwrap{position:relative}
+.acct{display:inline-flex;align-items:center;gap:8px;max-width:220px;padding:8px 15px;border-radius:999px;border:1px solid var(--gold);background:var(--gold);color:#211a0e;font-weight:600;font-size:13.5px;cursor:pointer;font-family:inherit}
+.acct.in{background:transparent;color:var(--ivory);border-color:var(--line)}
+.acct.in:hover{border-color:var(--gold)}
+.acct .ael{max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.acct svg{flex:none}
+.acctmenu{display:none;position:absolute;right:0;top:calc(100% + 8px);min-width:214px;background:var(--ink2);border:1px solid var(--line);border-radius:13px;padding:8px;box-shadow:0 18px 50px -12px rgba(0,0,0,.6)}
+.acctmenu.open{display:block}
+.amrow{padding:7px 10px;font-size:13px;word-break:break-all}
+.amout{width:100%;margin-top:6px;padding:10px;border-radius:9px;border:1px solid var(--line);background:var(--ink3);color:var(--ivory);font-weight:600;cursor:pointer;font-family:inherit;font-size:14px}
+.amout:hover{border-color:var(--gold)}
 </style>
 </head>
 <body>
+<header class="sitehead">
+  <div class="brand">DEL<b>x</b>Port <span class="sub">Live Price Desk</span></div>
+  <div class="acctwrap">
+    <button class="acct" id="acct" aria-haspopup="true" aria-expanded="false">Sign in</button>
+    <div class="acctmenu" id="acctMenu" role="menu"></div>
+  </div>
+</header>
 <div class="wrap">
-  <div class="brand">DEL<b>x</b>Port · <span style="color:var(--mut);font-family:'Space Grotesk'">Live Price Desk</span></div>
   <div class="tag">AI-driven export quotes — for verified trade buyers.</div>
   <div id="app"><div class="card center muted">Loading…</div></div>
 </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-         sendEmailVerification, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, addDoc, collection, serverTimestamp, onSnapshot }
-         from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { firebaseConfig, PRODUCTS, CONTAINERS, HOLD_MINUTES, FREE_EMAIL_RE, NOTIFY_NTFY_TOPIC, NOTIFY_WEBHOOK_URL } from "./firebase-config.js";
+<script>
+/* Boot watchdog: if the module never runs (e.g. an extension or network blocks
+   Google Firebase), replace the endless "Loading…" with something actionable. */
+window.__deskBoot = false;
+setTimeout(function(){
+  if (window.__deskBoot) return;
+  var a = document.getElementById('app');
+  if (a) a.innerHTML = '<div class="setup"><b>The sign-in desk didn\u2019t load.</b><br>'
+    + 'This is almost always a browser extension (ad / privacy blocker) or a network blocking Google\u2019s Firebase service. '
+    + 'Turn off blockers for delxport.com, or open this page in a private window or another browser, then reload.</div>';
+}, 9000);
+</script>
 
+<script type="module">
 const app$ = document.getElementById('app');
+const esc0 = s => String(s==null?'':s).replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
+const fatal = (title, detail) => { window.__deskBoot = true; app$.innerHTML = `<div class="setup"><b>${title}</b><br>${detail||''}</div>`; };
+
+// Firebase SDK + config are loaded dynamically so a blocked/failed load surfaces
+// as a readable message rather than a silent, permanent "Loading…".
+let initializeApp, getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut;
+let getFirestore, doc, getDoc, setDoc, addDoc, collection, serverTimestamp, onSnapshot;
+let firebaseConfig, PRODUCTS, CONTAINERS, HOLD_MINUTES, FREE_EMAIL_RE, NOTIFY_NTFY_TOPIC, NOTIFY_WEBHOOK_URL;
+async function loadSDK(){
+  // Try Google's CDN first; if it's blocked (extension/network), fall back to jsDelivr.
+  const sources = [
+    ["https://www.gstatic.com/firebasejs/10.12.2/", ["firebase-app.js","firebase-auth.js","firebase-firestore.js"]],
+    ["https://esm.run/firebase@10.12.2/", ["app","auth","firestore"]],
+  ];
+  let lastErr;
+  for (const [base, names] of sources){
+    try { return await Promise.all(names.map(n => import(base + n))); }
+    catch (e) { lastErr = e; }
+  }
+  throw lastErr;
+}
+try {
+  const [A, Au, Fs] = await loadSDK();
+  const Cfg = await import("./firebase-config.js");
+  ({ initializeApp } = A);
+  ({ getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut } = Au);
+  ({ getFirestore, doc, getDoc, setDoc, addDoc, collection, serverTimestamp, onSnapshot } = Fs);
+  ({ firebaseConfig, PRODUCTS, CONTAINERS, HOLD_MINUTES, FREE_EMAIL_RE, NOTIFY_NTFY_TOPIC, NOTIFY_WEBHOOK_URL } = Cfg);
+} catch (e) {
+  fatal('Couldn\u2019t reach the sign-in service.',
+    'Your browser blocked or failed to load Firebase \u2014 usually an ad-blocker or privacy extension, or a restricted network. '
+    + 'Turn off blockers for delxport.com (or try a private window / another browser), then reload. <span class="muted">['+esc0(e.message||e)+']</span>');
+  throw e;
+}
+window.__deskBoot = true;
+
 const qp = new URLSearchParams(location.search);
 const wantProduct = qp.get('product');
 
 // Guard: config not filled in yet
 if (String(firebaseConfig.apiKey).startsWith('PASTE')) {
-  app$.innerHTML = `<div class="setup"><b>Almost there.</b><br>This desk isn't connected to Firebase yet. Open <code>firebase-config.js</code>, paste your Firebase web config, and re-deploy. Setup steps are in <code>PRICE-DESK-SETUP.md</code>.</div>`;
+  fatal('Almost there.', 'This desk isn\u2019t connected to Firebase yet. Open <code>firebase-config.js</code>, paste your Firebase web config, and re-deploy.');
   throw new Error('firebase-config not set');
 }
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+let app, auth, db;
+try {
+  app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  db = getFirestore(app);
+} catch (e) {
+  fatal('Sign-in service failed to start.', esc0(e.message||e));
+  throw e;
+}
 let quoteUnsub = null, ticker = null;
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
+/* ── Top-right account control (login / logout) ── */
+const acctBtn = document.getElementById('acct');
+const acctMenu = document.getElementById('acctMenu');
+const personSvg = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-3.6 3.6-6 8-6s8 2.4 8 6"/></svg>';
+function closeMenu(){ acctMenu.classList.remove('open'); acctBtn.setAttribute('aria-expanded','false'); }
+function setAccount(user, prof){
+  if (!user){
+    acctBtn.className = 'acct';
+    acctBtn.textContent = 'Sign in';
+    acctBtn.onclick = () => { closeMenu(); renderAuth(); };
+    acctMenu.innerHTML = ''; closeMenu();
+    return;
+  }
+  acctBtn.className = 'acct in';
+  acctBtn.innerHTML = personSvg + '<span class="ael">'+esc(user.email)+'</span>';
+  acctBtn.onclick = (ev) => { ev.stopPropagation(); const open = acctMenu.classList.toggle('open'); acctBtn.setAttribute('aria-expanded', open?'true':'false'); };
+  const statusPill = (prof && prof.status) ? `<div class="amrow"><span class="pill">${esc(prof.status)}</span></div>` : '';
+  acctMenu.innerHTML = `<div class="amrow muted">${esc(user.email)}</div>${statusPill}<button class="amout" id="amout">Sign out</button>`;
+  document.getElementById('amout').onclick = () => { closeMenu(); signOut(auth); };
+}
+document.addEventListener('click', (e) => {
+  if (e.target !== acctBtn && !acctBtn.contains(e.target) && !acctMenu.contains(e.target)) closeMenu();
+});
+
 onAuthStateChanged(auth, async (user) => {
   if (quoteUnsub) { quoteUnsub(); quoteUnsub = null; }
   if (ticker) { clearInterval(ticker); ticker = null; }
-  if (!user) return renderAuth();
+  if (!user) { setAccount(null); return renderAuth(); }
   try { await user.reload(); } catch(e){}
-  if (!auth.currentUser.emailVerified) return renderVerify();
+  if (!auth.currentUser.emailVerified) { setAccount(user, null); return renderVerify(); }
   // Ensure profile doc
   const uref = doc(db, 'users', user.uid);
   let snap = await getDoc(uref);
@@ -91,6 +183,7 @@ onAuthStateChanged(auth, async (user) => {
     snap = await getDoc(uref);
   }
   const prof = snap.data();
+  setAccount(user, prof);
   if (prof.status !== 'approved') return renderPending(prof);
   renderDesk();
 });
@@ -177,7 +270,6 @@ function renderDesk(){
   const opts = Object.entries(PRODUCTS).map(([k,v])=>`<option value="${k}" ${k===wantProduct?'selected':''}>${esc(v.name)}</option>`).join('');
   const cont = Object.keys(CONTAINERS).map(c=>`<option value="${c}">${c} · ~${CONTAINERS[c]} MT</option>`).join('');
   app$.innerHTML = `
-  <div class="top"><span class="pill">Signed in</span><span class="muted" id="out">Sign out</span></div>
   <div class="card">
     <h1>Request a live quote</h1>
     <p>Pick the product and container. We lock today\u2019s rate and your all-in FOB price appears in about ${HOLD_MINUTES} minutes.</p>
@@ -188,7 +280,6 @@ function renderDesk(){
     <button class="btn" id="go">Request live quote</button>
     <div class="msg" id="msg"></div>
   </div>`;
-  document.getElementById('out').onclick = ()=> signOut(auth);
   document.getElementById('go').onclick = async ()=>{
     const product = document.getElementById('prod').value;
     const container = document.getElementById('cont').value;
@@ -266,9 +357,7 @@ function watchQuote(id){
   });
 }
 
-function shell(inner){ return `<div class="top"><span class="pill">Signed in</span><span class="muted" onclick="return false" id="_o">Sign out</span></div><div class="card">${inner}</div>`; }
-// re-bind sign out for shell views
-document.addEventListener('click', e=>{ if(e.target && e.target.id==='_o') signOut(auth); });
+function shell(inner){ return `<div class="card">${inner}</div>`; }
 
 const fmt = n => Number(n).toLocaleString('en-IN',{maximumFractionDigits:0});
 
