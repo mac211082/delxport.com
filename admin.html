@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DELxPort — Admin Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#17140F;--ink2:#1F1B15;--ink3:#2A241C;--line:#3A3229;--gold:#E3A230;--ivory:#F4ECDD;--mut:#B8AB95;--ok:#5FBF8F;--warn:#E0894A;--red:#E0503C}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--ivory);font-family:"Space Grotesk",system-ui,sans-serif;line-height:1.45}
+.wrap{max-width:860px;margin:0 auto;padding:28px 20px 90px}
+.brand{font-family:Fraunces,serif;font-weight:600;font-size:20px;margin-bottom:2px}.brand b{color:var(--gold)}
+.tag{color:var(--mut);font-size:13px;margin-bottom:22px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.card{background:linear-gradient(180deg,var(--ink2),var(--ink));border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:14px}
+h1{font-family:Fraunces,serif;font-weight:600;font-size:24px;margin:0 0 4px}
+h2{font-family:Fraunces,serif;font-weight:600;font-size:16px;margin:0 0 12px;color:var(--gold)}
+p{margin:0 0 12px;color:var(--mut)}
+label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin:10px 0 5px}
+input,select{width:100%;background:var(--ink3);border:1px solid var(--line);color:var(--ivory);border-radius:9px;padding:10px 12px;font-size:14px;font-family:inherit}
+input:focus{outline:none;border-color:var(--gold)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 16px;border-radius:10px;border:1px solid var(--gold);background:var(--gold);color:#211a0e;font-weight:600;font-size:14px;cursor:pointer;font-family:inherit}
+.btn.ghost{background:transparent;color:var(--gold)}
+.btn.red{border-color:var(--red);color:var(--red);background:transparent}
+.btn.sm{padding:7px 12px;font-size:13px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.msg{margin-top:12px;font-size:14px;padding:9px 12px;border-radius:8px;display:none}
+.msg.err{display:block;background:rgba(224,80,60,.12);border:1px solid rgba(224,80,60,.4);color:#f0a08c}
+.pill{display:inline-block;font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;padding:3px 9px;border-radius:999px;border:1px solid var(--line);color:var(--mut)}
+.q{border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px;background:var(--ink2)}
+.qh{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:4px}
+.qh b{font-family:Fraunces,serif;font-size:17px}
+.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+@media(max-width:640px){.grid{grid-template-columns:1fr 1fr}}
+.pl{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line);font-size:14px}
+.pl:last-child{border-bottom:0}.pl span{color:var(--mut)}
+.mono{font-family:"IBM Plex Mono",monospace}
+.pos{color:var(--ok)}.neg{color:var(--red)}
+.empty{color:var(--mut);font-size:14px;padding:6px 0}
+.rowbtns{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.acct{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.acct:last-child{border-bottom:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">DEL<b>x</b>Port · Admin Desk</div>
+  <div class="tag">Owner view — approvals, live quotes and margins.</div>
+  <div id="app"><div class="card" style="text-align:center;color:var(--mut)">Loading…</div></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, orderBy, onSnapshot, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { firebaseConfig, ADMIN_UID, HOLD_MINUTES } from "./firebase-config.js";
+
+const app$ = document.getElementById('app');
+if (String(firebaseConfig.apiKey).startsWith('PASTE')) {
+  app$.innerHTML = `<div class="card">Connect Firebase first — paste your config into <code>firebase-config.js</code>. See <code>PRICE-DESK-SETUP.md</code>.</div>`;
+  throw new Error('config');
+}
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+let unsubU=null, unsubQ=null;
+const esc = s => String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt = n => Number(n).toLocaleString('en-IN',{maximumFractionDigits:0});
+
+function alertNewQuote(q){
+  try{ if('Notification' in window && Notification.permission==='granted'){
+    new Notification('DELxPort — new quote', { body:`${q.productName||q.product} · ${q.container} · ${q.email}` });
+  }}catch(e){}
+  try{
+    const ac=new (window.AudioContext||window.webkitAudioContext)();
+    const o=ac.createOscillator(), g=ac.createGain();
+    o.connect(g); g.connect(ac.destination); o.type='sine'; o.frequency.value=880;
+    g.gain.setValueAtTime(0.0001, ac.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.3, ac.currentTime+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime+0.35);
+    o.start(); o.stop(ac.currentTime+0.36);
+  }catch(e){}
+}
+
+onAuthStateChanged(auth, (user)=>{
+  if(unsubU){unsubU();unsubU=null;} if(unsubQ){unsubQ();unsubQ=null;}
+  if(!user) return renderLogin();
+  if(String(ADMIN_UID).startsWith('PASTE')){
+    app$.innerHTML=`<div class="card"><h1>One more step</h1><p>You're signed in. Your admin UID is:</p>
+      <p class="mono" style="color:var(--gold);word-break:break-all">${esc(user.uid)}</p>
+      <p>Paste it into <b>ADMIN_UID</b> in <code>firebase-config.js</code> and into <b>PASTE_YOUR_ADMIN_UID</b> in <code>firestore.rules</code>, then re-deploy and publish the rules.</p>
+      <button class="btn ghost" id="out">Sign out</button></div>`;
+    document.getElementById('out').onclick=()=>signOut(auth); return;
+  }
+  if(user.uid!==ADMIN_UID){
+    app$.innerHTML=`<div class="card"><h1>Not an admin account</h1><p>This console is owner-only.</p><button class="btn ghost" id="out">Sign out</button></div>`;
+    document.getElementById('out').onclick=()=>signOut(auth); return;
+  }
+  renderConsole();
+});
+
+function renderLogin(){
+  app$.innerHTML=`<div class="card" style="max-width:420px">
+    <h1>Admin sign in</h1>
+    <label>Email</label><input id="email" type="email">
+    <label>Password</label><input id="pw" type="password">
+    <button class="btn" id="go" style="margin-top:16px;width:100%">Sign in</button>
+    <div class="msg" id="msg"></div></div>`;
+  document.getElementById('go').onclick=async()=>{
+    const m=document.getElementById('msg');
+    try{ await signInWithEmailAndPassword(auth, email.value.trim(), pw.value); }
+    catch(e){ m.className='msg err'; m.textContent=(e.message||'Sign-in failed'); }
+  };
+}
+
+function renderConsole(){
+  app$.innerHTML=`
+    <div class="top"><span class="pill" style="border-color:var(--ok);color:var(--ok)">Owner</span>
+      <span class="btn ghost sm" id="out">Sign out</span></div>
+    <div class="card"><h2>Buyer approvals</h2><div id="appr"><div class="empty">Loading…</div></div></div>
+    <div class="card"><h2>Quote requests</h2><div id="quotes"><div class="empty">Loading…</div></div></div>`;
+  document.getElementById('out').onclick=()=>signOut(auth);
+  if('Notification' in window && Notification.permission==='default'){ try{ Notification.requestPermission(); }catch(e){} }
+
+  // Pending approvals
+  unsubU = onSnapshot(query(collection(db,'users'), where('status','==','pending')), (s)=>{
+    const box=document.getElementById('appr');
+    if(s.empty){ box.innerHTML=`<div class="empty">No one waiting. Company-domain signups are auto-approved.</div>`; return; }
+    box.innerHTML='';
+    s.forEach(d=>{
+      const u=d.data(); const row=document.createElement('div'); row.className='acct';
+      row.innerHTML=`<div><b>${esc(u.email)}</b><div class="pill" style="margin-top:4px">free email</div></div>
+        <div class="rowbtns"><button class="btn sm" data-ok>Approve</button><button class="btn red sm" data-no>Reject</button></div>`;
+      row.querySelector('[data-ok]').onclick=()=>updateDoc(doc(db,'users',d.id),{status:'approved'});
+      row.querySelector('[data-no]').onclick=()=>updateDoc(doc(db,'users',d.id),{status:'rejected'});
+      box.appendChild(row);
+    });
+  }, err=>{ document.getElementById('appr').innerHTML=`<div class="empty">${esc(err.message)}</div>`; });
+
+  // Quotes newest first
+  let firstQ = true;
+  unsubQ = onSnapshot(query(collection(db,'quotes'), orderBy('createdAt','desc')), (s)=>{
+    if(!firstQ){
+      s.docChanges().forEach(ch=>{
+        if(ch.type==='added' && ch.doc.data().status==='pending') alertNewQuote(ch.doc.data());
+      });
+    }
+    firstQ=false;
+    const box=document.getElementById('quotes');
+    if(s.empty){ box.innerHTML=`<div class="empty">No quote requests yet.</div>`; return; }
+    box.innerHTML='';
+    s.forEach(d=> box.appendChild(quoteCard(d.id, d.data())));
+  }, err=>{ document.getElementById('quotes').innerHTML=`<div class="empty">${esc(err.message)}</div>`; });
+}
+
+function quoteCard(id, q){
+  const el=document.createElement('div'); el.className='q';
+  const created = q.createdAt?.toMillis ? q.createdAt.toMillis() : Date.now();
+  const age = Math.floor((Date.now()-created)/60000);
+  const ready = age >= HOLD_MINUTES;
+  const statusPill = q.status==='quoted'
+      ? `<span class="pill" style="border-color:var(--ok);color:var(--ok)">Quoted</span>`
+      : q.status==='rejected'
+      ? `<span class="pill" style="border-color:var(--red);color:var(--red)">Declined</span>`
+      : `<span class="pill" style="border-color:${ready?'var(--ok)':'var(--warn)'};color:${ready?'var(--ok)':'var(--warn)'}">${ready?'Ready to send':'Holding '+(HOLD_MINUTES-age)+'m'}</span>`;
+  el.innerHTML=`<div class="qh"><div><b>${esc(q.productName||q.product)}</b>
+      <div class="mut" style="color:var(--mut);font-size:13px">${esc(q.email)} · ${esc(q.container)} · ${q.mt} MT · ${age}m ago</div></div>${statusPill}</div>`;
+
+  if(q.status==='quoted'){
+    const totalUsd=q.fobUsdPerMt*q.mt;
+    const info=document.createElement('div');
+    info.innerHTML=`<div class="pl"><span>Buyer FOB</span><b class="mono">$${fmt(q.fobUsdPerMt)}/MT · $${fmt(totalUsd)} total</b></div>
+      <div class="pl"><span>Your net</span><b class="mono" data-net>loading…</b></div>`;
+    el.appendChild(info);
+    getDoc(doc(db,'quote_admin',id)).then(d=>{
+      const t=info.querySelector('[data-net]');
+      if(d.exists()){ const a=d.data(); t.textContent=`₹${fmt(a.netInr)} (${a.marginPct.toFixed(1)}%)`; t.classList.add(a.netInr>=0?'pos':'neg'); }
+      else t.textContent='—';
+    }).catch(()=>{});
+    return el;
+  }
+  if(q.status==='rejected'){ return el; }
+
+  // pricing form
+  const f=document.createElement('div');
+  f.innerHTML=`
+    <div class="grid">
+      <div><label>Buy ₹/kg</label><input data-k="buy" value="70"></div>
+      <div><label>FOB $/MT (all-in)</label><input data-k="fob" value="1000"></div>
+      <div><label>USD / INR</label><input data-k="fx" value="94.68"></div>
+      <div><label>Packing ₹</label><input data-k="pack" value="15000"></div>
+      <div><label>Sanitation ₹</label><input data-k="san" value="17000"></div>
+      <div><label>Logistics ₹</label><input data-k="log" value="120000"></div>
+    </div>
+    <div style="margin-top:12px" data-pl></div>
+    <label>Note to buyer (optional)</label><input data-k="note" placeholder="e.g. rate valid 48h, Halal cert included">
+    <div class="rowbtns">
+      <button class="btn" data-confirm>Confirm & reveal to buyer</button>
+      <button class="btn red" data-reject>Decline</button>
+    </div>
+    <div class="msg" data-msg></div>`;
+  el.appendChild(f);
+  const g=k=>parseFloat(f.querySelector(`[data-k="${k}"]`).value)||0;
+  const plBox=f.querySelector('[data-pl]');
+  function calc(){
+    const mt=q.mt, fob=g('fob'), fx=g('fx');
+    const revenue=fob*fx*mt;
+    const productCost=g('buy')*1000*mt;
+    const totalCost=productCost+g('pack')+g('san')+g('log');
+    const net=revenue-totalCost;
+    const margin=revenue>0?net/revenue*100:0;
+    plBox.innerHTML=`
+      <div class="pl"><span>Revenue (FOB)</span><b class="mono">₹${fmt(revenue)}</b></div>
+      <div class="pl"><span>Total cost</span><b class="mono">₹${fmt(totalCost)}</b></div>
+      <div class="pl"><span>Net margin</span><b class="mono ${net>=0?'pos':'neg'}">₹${fmt(net)} · ${margin.toFixed(1)}%</b></div>
+      <div class="pl"><span>Buyer sees</span><b class="mono">$${fmt(fob)}/MT · $${fmt(fob*mt)} total</b></div>`;
+    return {revenue,productCost,totalCost,net,margin,fob,fx,mt};
+  }
+  f.querySelectorAll('input').forEach(i=>i.addEventListener('input',calc)); calc();
+
+  f.querySelector('[data-confirm]').onclick=async()=>{
+    const c=calc(); const btn=f.querySelector('[data-confirm]'); btn.disabled=true;
+    const m=f.querySelector('[data-msg]');
+    try{
+      await updateDoc(doc(db,'quotes',id),{
+        fobUsdPerMt:c.fob, usdInr:c.fx, mt:c.mt, status:'quoted',
+        note:f.querySelector('[data-k="note"]').value||'', quotedAt:serverTimestamp()
+      });
+      await setDoc(doc(db,'quote_admin',id),{
+        buyKgInr:g('buy'), packing:g('pack'), sanitation:g('san'), logistics:g('log'),
+        productCost:c.productCost, totalCostInr:c.totalCost, revenueInr:c.revenue,
+        netInr:c.net, marginPct:c.margin, quotedAt:serverTimestamp()
+      });
+    }catch(e){ m.className='msg err'; m.textContent=(e.message||'Failed'); btn.disabled=false; }
+  };
+  f.querySelector('[data-reject]').onclick=()=>updateDoc(doc(db,'quotes',id),{status:'rejected'});
+  return el;
+}
+</script>
+</body>
+</html>
