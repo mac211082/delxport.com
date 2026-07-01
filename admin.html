@@ -42,6 +42,11 @@ input:focus{outline:none;border-color:var(--gold)}
 .rowbtns{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
 .acct{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
 .acct:last-child{border-bottom:0}
+.rfq{display:grid;grid-template-columns:1fr 1fr;gap:0 20px;margin:10px 0 4px;padding:6px 14px;background:var(--ink3);border:1px solid var(--line);border-radius:10px}
+.rfq .pl{border-bottom:1px solid var(--line)}
+.rfq .full{grid-column:1/-1}
+.rfq a{color:var(--gold);text-decoration:none}
+@media(max-width:640px){.rfq{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -169,6 +174,28 @@ function quoteCard(id, q){
       : `<span class="pill" style="border-color:${ready?'var(--ok)':'var(--warn)'};color:${ready?'var(--ok)':'var(--warn)'}">${ready?'Ready to send':'Holding '+(HOLD_MINUTES-age)+'m'}</span>`;
   el.innerHTML=`<div class="qh"><div><b>${esc(q.productName||q.product)}</b>
       <div class="mut" style="color:var(--mut);font-size:13px">${esc(q.email)} · ${esc(q.container)} · ${q.mt} MT · ${age}m ago</div></div>${statusPill}</div>`;
+
+  // Buyer's RFQ answers (only rows the buyer actually filled)
+  const waDigits = String(q.whatsapp||'').replace(/[^\d]/g,'');
+  const rfq = [
+    ['Grade / variety', esc(q.grade)],
+    ['Quantity', esc(q.quantity)],
+    ['Destination', esc(q.destination)],
+    ['Price basis', esc(q.incoterms)],
+    ['Packaging', esc(q.packaging)],
+    ['Bag size', esc(q.bagSize)],
+    ['Branding', esc(q.branding)],
+    ['Payment', esc(q.payment)],
+    ['Sample', esc(q.sample)],
+    ['Target price', esc(q.targetPrice)],
+    ['WhatsApp', q.whatsapp ? `<a href="https://wa.me/${waDigits}" target="_blank" rel="noopener">${esc(q.whatsapp)}</a>` : '']
+  ].filter(r=>r[1]);
+  if(rfq.length || q.notes){
+    const d=document.createElement('div'); d.className='rfq';
+    d.innerHTML = rfq.map(r=>`<div class="pl"><span>${r[0]}</span><b>${r[1]}</b></div>`).join('')
+      + (q.notes ? `<div class="pl full"><span>Notes</span><b>${esc(q.notes)}</b></div>` : '');
+    el.appendChild(d);
+  }
 
   if(q.status==='quoted'){
     const totalUsd=q.fobUsdPerMt*q.mt;

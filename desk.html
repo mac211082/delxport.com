@@ -21,8 +21,11 @@ h1{font-family:Fraunces,serif;font-weight:600;font-size:26px;margin:0 0 4px}
 h2{font-family:Fraunces,serif;font-weight:600;font-size:19px;margin:0 0 10px}
 p{margin:0 0 12px;color:var(--mut)}
 label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin:14px 0 6px}
-input,select{width:100%;background:var(--ink3);border:1px solid var(--line);color:var(--ivory);border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit}
-input:focus,select:focus{outline:none;border-color:var(--gold)}
+input,select,textarea{width:100%;background:var(--ink3);border:1px solid var(--line);color:var(--ivory);border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit}
+textarea{resize:vertical;min-height:64px;line-height:1.4}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold)}
+label .opt{text-transform:none;letter-spacing:0;color:var(--mut);font-weight:400}
+.grouplabel{margin:22px 0 2px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--gold)}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:18px;padding:13px 18px;border-radius:11px;border:1px solid var(--gold);background:var(--gold);color:#211a0e;font-weight:600;font-size:15px;cursor:pointer;font-family:inherit}
 .btn.ghost{background:transparent;color:var(--gold)}
 .btn:disabled{opacity:.5;cursor:not-allowed}
@@ -265,33 +268,103 @@ function renderPending(prof){
   document.getElementById('out').onclick = ()=> signOut(auth);
 }
 
+/* ── RFQ option lists (all dropdowns, quick to tap) ── */
+const GRADES = {
+  rice:      ["1121 Golden Sella","1121 Steam","1121 White Sella","1121 Raw","1509 Sella","Sharbati Steam","Sona Masoori","PR11 / PR14 (non-basmati)","Not sure — please advise"],
+  pulses:    ["Chana (chickpeas)","Toor / Arhar","Masoor (red lentil)","Moong (green gram)","Urad (black gram)","Kabuli chana","Yellow peas","Not sure — please advise"],
+  spices:    ["Cumin / Jeera","Coriander seed","Turmeric","Red chilli","Black pepper","Mustard seed","Fennel / Saunf","Mixed — see notes","Not sure — please advise"],
+  groceries: ["Basmati + staples mix","Atta / wheat flour","Sugar","Edible oil","Tea","Papad / snacks","Mixed — see notes"],
+  hotels:    ["HORECA mixed container","Bulk staples (rice / pulses / oil)","Custom basket — see notes"]
+};
+const GRADES_DEFAULT = ["Standard grade","Premium grade","Not sure — please advise"];
+const FIELDS = {
+  qty:       ["1 container","2 containers","3–5 containers","6–10 containers","10+ containers","Recurring monthly"],
+  dest:      ["UAE — Jebel Ali / Dubai","Saudi Arabia — Dammam / Jeddah","Qatar — Hamad","Kuwait — Shuwaikh","Oman — Sohar / Muscat","Bahrain","Singapore","Malaysia — Port Klang","Other — see notes"],
+  incoterm:  ["FOB — Nhava Sheva","CIF — my destination port","CFR / C&F","EXW — Delhi ICD","Not sure — please advise"],
+  packaging: ["PP woven bags (standard)","BOPP printed bags","Non-woven bags","Jute bags","Vacuum pack","Consumer retail packs","Your recommendation"],
+  bag:       ["1 kg","5 kg","10 kg","25 kg","50 kg","Custom size — see notes"],
+  brand:     ["Generic / unbranded","My brand (private label / custom bags)","DELxPort pack","Your recommendation"],
+  payment:   ["100% advance (TT)","LC at sight","30% advance + balance vs docs","Flexible — please advise"],
+  sample:    ["No — quote the container","Yes — send a sample first"]
+};
+const optsHtml = (arr, sel) => arr.map(o=>`<option value="${esc(o)}"${o===sel?' selected':''}>${esc(o)}</option>`).join('');
+function gradesFor(p){ return GRADES[p] || GRADES_DEFAULT; }
+
 /* ── The desk ── */
 function renderDesk(){
-  const opts = Object.entries(PRODUCTS).map(([k,v])=>`<option value="${k}" ${k===wantProduct?'selected':''}>${esc(v.name)}</option>`).join('');
+  const prodOpts = Object.entries(PRODUCTS).map(([k,v])=>`<option value="${k}"${k===wantProduct?' selected':''}>${esc(v.name)}</option>`).join('');
+  const startProd = (wantProduct && PRODUCTS[wantProduct]) ? wantProduct : Object.keys(PRODUCTS)[0];
   const cont = Object.keys(CONTAINERS).map(c=>`<option value="${c}">${c} · ~${CONTAINERS[c]} MT</option>`).join('');
   app$.innerHTML = `
   <div class="card">
     <h1>Request a live quote</h1>
-    <p>Pick the product and container. We lock today\u2019s rate and your all-in FOB price appears in about ${HOLD_MINUTES} minutes.</p>
-    <label>Product</label>
-    <select id="prod">${opts}</select>
-    <label>Container</label>
-    <select id="cont">${cont}</select>
+    <p>A few quick taps so we quote the right spec. Your all-in price appears here the moment we approve it \u2014 usually within ${HOLD_MINUTES} minutes.</p>
+
+    <div class="grouplabel">Product</div>
+    <label>What do you want to import</label>
+    <select id="prod">${prodOpts}</select>
+    <label>Grade / variety</label>
+    <select id="grade">${optsHtml(gradesFor(startProd))}</select>
+
+    <div class="grouplabel">Order size</div>
+    <div class="row">
+      <div><label>Quantity</label><select id="qty">${optsHtml(FIELDS.qty)}</select></div>
+      <div><label>Container</label><select id="cont">${cont}</select></div>
+    </div>
+
+    <div class="grouplabel">Shipping</div>
+    <div class="row">
+      <div><label>Destination</label><select id="dest">${optsHtml(FIELDS.dest)}</select></div>
+      <div><label>Price basis</label><select id="incoterm">${optsHtml(FIELDS.incoterm)}</select></div>
+    </div>
+
+    <div class="grouplabel">Packing</div>
+    <div class="row">
+      <div><label>Packaging</label><select id="packaging">${optsHtml(FIELDS.packaging)}</select></div>
+      <div><label>Bag size</label><select id="bag">${optsHtml(FIELDS.bag)}</select></div>
+    </div>
+    <label>Branding</label>
+    <select id="brand">${optsHtml(FIELDS.brand)}</select>
+
+    <div class="grouplabel">Terms</div>
+    <div class="row">
+      <div><label>Payment</label><select id="payment">${optsHtml(FIELDS.payment)}</select></div>
+      <div><label>Sample</label><select id="sample">${optsHtml(FIELDS.sample)}</select></div>
+    </div>
+
+    <div class="grouplabel">Your details <span class="opt">(optional)</span></div>
+    <div class="row">
+      <div><label>Target price <span class="opt">(optional)</span></label><input id="target" placeholder="e.g. $980/MT"></div>
+      <div><label>WhatsApp <span class="opt">(optional)</span></label><input id="wa" placeholder="+971…"></div>
+    </div>
+    <label>Anything else <span class="opt">(optional)</span></label>
+    <textarea id="notes" placeholder="Custom bag print, specific brokens %, delivery deadline, port name…"></textarea>
+
     <button class="btn" id="go">Request live quote</button>
     <div class="msg" id="msg"></div>
   </div>`;
+
+  // Grade options follow the selected product
+  const prodSel = document.getElementById('prod');
+  prodSel.onchange = ()=>{ document.getElementById('grade').innerHTML = optsHtml(gradesFor(prodSel.value)); };
+
+  const v = id => (document.getElementById(id)?.value || '').trim();
   document.getElementById('go').onclick = async ()=>{
-    const product = document.getElementById('prod').value;
-    const container = document.getElementById('cont').value;
+    const product = v('prod');
+    const container = v('cont');
     document.getElementById('go').disabled = true;
     try{
       const ref = await addDoc(collection(db,'quotes'), {
         uid: auth.currentUser.uid, email: auth.currentUser.email,
         product, productName: PRODUCTS[product].name,
         container, mt: CONTAINERS[container],
+        grade: v('grade'), quantity: v('qty'), destination: v('dest'),
+        incoterms: v('incoterm'), packaging: v('packaging'), bagSize: v('bag'),
+        branding: v('brand'), payment: v('payment'), sample: v('sample'),
+        targetPrice: v('target'), whatsapp: v('wa'), notes: v('notes'),
         status: 'pending', createdAt: serverTimestamp()
       });
-      notifyAdmin({ productName: PRODUCTS[product].name, container, email: auth.currentUser.email });
+      notifyAdmin({ productName: PRODUCTS[product].name, container, email: auth.currentUser.email, destination: v('dest') });
       watchQuote(ref.id);
     }catch(e){
       const m=document.getElementById('msg'); m.className='msg err'; m.textContent=prettyErr(e);
@@ -299,6 +372,7 @@ function renderDesk(){
     }
   };
 }
+
 
 /* ── Watch a quote: countdown → reveal ── */
 function watchQuote(id){
@@ -321,7 +395,7 @@ function watchQuote(id){
           <p>We couldn\u2019t quote this line right now. Try another product or reach out directly.</p>
           <button class="btn" id="again">New request</button>`); wireAgain(); return;
       }
-      if (priced && past){
+      if (priced){
         stop();
         const totalUsd = (q.fobUsdPerMt * q.mt);
         app$.innerHTML = shell(`<span class="pill" style="border-color:var(--ok);color:var(--ok)">Live quote ready</span>
