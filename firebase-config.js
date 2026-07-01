@@ -20,7 +20,7 @@ export const ADMIN_UID = "gsSoSooY9wYeWOLNgWBEZjByXhH3";
 
 // Products the desk can quote. Keys match the ?product= link from each desk page.
 export const PRODUCTS = {
-  rice:      { name: "1121 Golden Sella Basmati Rice" },
+  rice:      { name: "Rices" },
   pulses:    { name: "Pulses & Dal" },
   spices:    { name: "Whole Spices" },
   groceries: { name: "Packaged Groceries" },
@@ -45,3 +45,30 @@ export const NOTIFY_WEBHOOK_URL = "";
 // Free / consumer email providers that are NOT auto-approved (they go to your queue).
 // This is mirrored in firestore.rules — keep the two in sync if you edit it.
 export const FREE_EMAIL_RE = /@(gmail|googlemail|yahoo|ymail|rocketmail|hotmail|outlook|live|msn|aol|icloud|me|mac|proton|protonmail|pm|gmx|mail|zoho|yandex|inbox|hey)\./i;
+
+// ── Your company details, printed on the Proforma Invoice / Quotation PDF ──
+// EDIT THESE to your real registered details before sending PDFs to buyers.
+export const SELLER = {
+  brand:      "DELxPort",
+  legalName:  "Just Live Trade",
+  address:    "Chandni Chowk, Old Delhi",
+  city:       "New Delhi 110006, India",
+  iec:        "IEC: [your IEC number]",
+  apeda:      "APEDA RCMC: [your RCMC number]",
+  gstin:      "GSTIN: [your GSTIN]",
+  email:      "trade@delxport.com",
+  phone:      "+91 [your WhatsApp/phone]",
+  website:    "delxport.com",
+  // Bank details for the Proforma Invoice (buyers need these for TT / LC). Fill before use.
+  bankName:   "[Bank name]",
+  bankBranch: "[Branch]",
+  bankAccount:"[Account number]",
+  bankIfsc:   "[IFSC]",
+  bankSwift:  "[SWIFT/BIC]"
+};
+export const INVOICE = {
+  currency:     "USD",
+  validityDays: 7,
+  loadingPort:  "Nhava Sheva (JNPT), India",
+  remarks:      "Rate valid subject to stock availability and USD/INR at time of booking. Prices exclude destination charges, duties and taxes."
+};
