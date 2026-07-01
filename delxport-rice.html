@@ -193,6 +193,15 @@ h1,h2,h3{margin:0;font-family:var(--disp);font-weight:500;letter-spacing:-.01em;
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:4px}
+.gate{display:grid;grid-template-columns:1.35fr .8fr;gap:34px;align-items:center;background:linear-gradient(180deg,var(--ink2),var(--ink3));border:1px solid var(--line);border-radius:20px;padding:38px}
+.gate-lock{display:inline-flex;width:48px;height:48px;align-items:center;justify-content:center;border-radius:13px;background:color-mix(in srgb,var(--gold) 15%,transparent);color:var(--gold);border:1px solid color-mix(in srgb,var(--gold) 38%,transparent);margin-bottom:16px}
+.gate h2{font-size:clamp(23px,3vw,31px);line-height:1.12;margin:0 0 12px}
+.gate p{color:var(--dim);margin:0 0 20px;max-width:54ch;font-size:15px;line-height:1.6}
+.gate-steps{display:flex;flex-direction:column;gap:12px}
+.gs{display:flex;align-items:center;gap:13px;background:var(--ink);border:1px solid var(--line);border-radius:13px;padding:13px 15px}
+.gs b{flex:none;width:27px;height:27px;display:grid;place-items:center;border-radius:50%;background:var(--gold);color:#211a0e;font-size:13px;font-weight:700}
+.gs span{font-size:13.5px;color:var(--ivory);line-height:1.35}
+@media(max-width:760px){.gate{grid-template-columns:1fr;padding:26px;gap:24px}}
 </style>
 </head>
 <body>
@@ -217,7 +226,7 @@ h1,h2,h3{margin:0;font-family:var(--disp);font-weight:500;letter-spacing:-.01em;
       <h1>You'll always know <em>exactly</em> where your rice is.</h1>
       <p class="lede">Live FOB pricing, lab-tested 1121 Golden Sella, and Domino's-style shipment tracking — with a real person on WhatsApp or video call, any hour. Every quote, spec and message is AI-logged and searchable, from the Delhi mandi to your port.</p>
       <div class="cta-row">
-        <a class="btn btn-gold" href="#rates">Get today's live rate</a>
+        <a class="btn btn-gold" href="desk.html?product=rice">Get today's live rate</a>
         <a class="btn btn-ghost" href="#track">Track a shipment ›</a>
       </div>
       <div class="hero-badges"><span class="pill"><b>AI-driven</b> desk</span>
@@ -233,41 +242,19 @@ h1,h2,h3{margin:0;font-family:var(--disp);font-weight:500;letter-spacing:-.01em;
 
   <section class="section" id="rates">
     <div class="wrap">
-      <div class="sec-head">
-        <h2>The export desk that shows its numbers.</h2>
-        <p>A live FOB quote and a full landed-cost breakdown, out in the open. Switch to Owner view to see the margin engine behind every container.</p>
-      </div>
-      <div class="board" id="board">
-        <div class="board-top">
-          <span class="live"><span class="dot"></span>AI desk · live</span>
-          <span class="board-sku"><b>1121 Golden Sella · 20ft · Jebel Ali (UAE)</b></span>
-          <div class="viewtog" id="viewtog"><button data-v="buyer" class="on">Buyer</button><button data-v="owner">Owner</button></div>
+      <div class="gate">
+        <div class="gate-l">
+          <span class="gate-lock"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
+          <h2>Live pricing is for verified buyers.</h2>
+          <p>We quote today's live FOB rate per order — never a public price for competitors to scrape. Register with your company email, tell us the grade and container, and your all-in FOB quote lands in about 30 minutes.</p>
+          <a class="btn btn-gold" href="desk.html?product=rice">Sign in &amp; get a live quote ›</a>
         </div>
-        <div class="board-grid">
-          <div class="board-in">
-            <p class="in-lab">Set today's inputs</p>
-            <div class="field owner-only"><label>Buy price — Delhi mandi</label><span class="inbox"><span>₹</span><input id="buy" type="number" value="70" step="0.5"><span>/kg</span></span></div>
-            <div class="field"><label>Sell price — FOB</label><span class="inbox"><span>$</span><input id="fob" type="number" value="1000" step="10"><span>/MT</span></span></div>
-            <div class="field"><label>USD → INR <span class="fxtag" id="fxtag">live</span></label><span class="inbox"><span>₹</span><input id="fx" type="number" value="94.68" step="0.25"></span></div>
-            <div class="field"><label>Container load</label><span class="inbox"><input id="mt" type="number" value="25" step="1"><span>MT</span></span></div>
-            <div class="field"><label>Packing</label><span class="inbox"><span>₹</span><input id="pack" type="number" value="15000" step="1000"></span></div>
-            <div class="field"><label>Sanitation &amp; certs</label><span class="inbox"><span>₹</span><input id="sani" type="number" value="17000" step="1000"></span></div>
-            <div class="field"><label>Logistics &amp; docs</label><span class="inbox"><span>₹</span><input id="logi" type="number" value="120000" step="5000"></span></div>
-          </div>
-          <div class="rows" id="rows">
-            <div class="rr"><div class="k"><b>Product</b><small>rice procurement</small></div><div class="v owner-only" data-k="product">—</div></div>
-            <div class="rr"><div class="k"><b>Packing</b><small>rebagging</small></div><div class="v" data-k="pack">—</div></div>
-            <div class="rr"><div class="k"><b>Sanitation</b><small>fumigation · phyto · lab · halal</small></div><div class="v" data-k="sani">—</div></div>
-            <div class="rr"><div class="k"><b>Logistics</b><small>inland · THC · CHA · insurance · WC</small></div><div class="v" data-k="logi">—</div></div>
-            <div class="rr total hero-row"><div class="k"><b id="revlab">Your all-in FOB price</b><small>per container</small></div><div class="v" data-k="rev">—</div></div>
-            <div class="rr owner-only"><div class="k"><b>Total cost</b><small>landed to port, loaded</small></div><div class="v" data-k="cost">—</div></div>
-            <div class="rr net owner-only"><div class="k"><b>Net profit</b><small>per container</small></div><div class="v" data-k="net">—</div></div>
-            <div class="rr owner-only"><div class="k"><b>Margin</b><small>net · per MT</small></div><div class="v" data-k="marg">—</div></div>
-          </div>
+        <div class="gate-steps">
+          <div class="gs"><b>1</b><span>Register &amp; verify your company email</span></div>
+          <div class="gs"><b>2</b><span>Pick the grade &amp; 20ft / 40ft container</span></div>
+          <div class="gs"><b>3</b><span>Your live FOB quote in ~30 minutes</span></div>
         </div>
-        <div class="board-foot"><span>Buyer view shows your price. Owner view shows the P&amp;L.</span><span>Rate held 24h · seeded from live base case</span></div>
       </div>
-      <div class="ticker" id="ticker" aria-hidden="true"></div>
     </div>
   </section>
 
@@ -356,7 +343,7 @@ h1,h2,h3{margin:0;font-family:var(--disp);font-weight:500;letter-spacing:-.01em;
       <p>A live rate, a sample on the way, and a WhatsApp thread that stays open until it's at your door.</p>
       <div class="cta-row">
         <a class="wa-btn" href="#"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1 0 12 2Z"/></svg>Message us on WhatsApp</a>
-        <a class="btn btn-ghost" href="#rates">Open the live desk</a>
+        <a class="btn btn-ghost" href="desk.html?product=rice">Open the live desk</a>
       </div>
     </div>
   </section>
@@ -390,72 +377,6 @@ h1,h2,h3{margin:0;font-family:var(--disp);font-weight:500;letter-spacing:-.01em;
 (function(){
   var rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var $ = function(s){return document.querySelector(s)};
-  var inr = function(n){return '₹'+Math.round(n).toLocaleString('en-IN')};
-  var boardEl = $('#board');
-  var view='buyer';
-
-  function num(id){var e=$('#'+id);return e?(+e.value||0):0;}
-  function set(k,v){var n=document.querySelector('[data-k="'+k+'"]'); if(n)n.textContent=v;}
-
-  function calcCommodity(){
-    var buy=num('buy'),fob=num('fob'),fx=num('fx'),mt=num('mt'),pack=num('pack'),sani=num('sani'),logi=num('logi');
-    var product=buy*mt*1000, rev=fob*mt*fx, cost=product+pack+sani+logi, net=rev-cost, marg=rev?net/rev*100:0, perMT=mt?net/mt:0;
-    set('product',inr(product));set('pack',inr(pack));set('sani',inr(sani));set('logi',inr(logi));
-    set('rev',inr(rev));set('cost',inr(cost));set('net',inr(net));set('marg',marg.toFixed(1)+'%  ·  '+inr(perMT)+'/MT');
-    $('#revlab').textContent = view==='buyer' ? 'Your all-in FOB price' : 'Revenue (FOB)';
-  }
-  function calcBasket(){
-    var items=document.querySelectorAll('.bitem'), sum=0;
-    items.forEach(function(i){sum+=(+i.value||0)});
-    var pack=num('pack'),logi=num('logi'),fobc=num('fobc'),fx=num('fx');
-    var rev=fobc*fx, cost=sum+pack+logi, net=rev-cost, marg=rev?net/rev*100:0;
-    set('goods',inr(sum));set('pack',inr(pack));set('logi',inr(logi));
-    set('rev',inr(rev));set('cost',inr(cost));set('net',inr(net));set('marg',marg.toFixed(1)+'%');
-    $('#revlab').textContent = view==='buyer' ? 'Your container price' : 'Revenue (FOB / container)';
-  }
-  var calc = CONFIG.boardType==='basket' ? calcBasket : calcCommodity;
-
-  function applyView(){
-    document.querySelectorAll('.owner-only').forEach(function(n){n.classList.toggle('hidden', view==='buyer')});
-    boardEl.classList.toggle('buyer', view==='buyer');
-    var b=$('#buy'); if(b){ if(view==='buyer'){b.classList.add('locked');b.setAttribute('readonly','')}else{b.classList.remove('locked');b.removeAttribute('readonly')} }
-    calc();
-  }
-  $('#viewtog').addEventListener('click',function(e){
-    var b=e.target.closest('button'); if(!b)return;
-    view=b.dataset.v;
-    this.querySelectorAll('button').forEach(function(x){x.classList.toggle('on',x===b)});
-    applyView();
-  });
-  document.querySelectorAll('#board input').forEach(function(i){i.addEventListener('input',calc)});
-  applyView();
-
-  // live USD->INR (falls back to the seeded 94.68 if the feed is unreachable)
-  (async function(){
-    var el=document.getElementById('fx'); if(!el) return;
-    var tag=document.getElementById('fxtag');
-    var urls=['https://open.er-api.com/v6/latest/USD','https://api.frankfurter.app/latest?from=USD&to=INR'];
-    for(var i=0;i<urls.length;i++){
-      try{
-        var r=await fetch(urls[i]); if(!r.ok) continue;
-        var j=await r.json();
-        var rate=(j.rates&&j.rates.INR)?j.rates.INR:null;
-        if(rate){ el.value=Number(rate).toFixed(2); if(tag){tag.textContent='live';tag.classList.add('on');} calc(); return; }
-      }catch(e){}
-    }
-    if(tag){ tag.textContent='manual'; }
-  })();
-
-  // ticker
-  var mk = CONFIG.ticker.slice();
-  function drawTicker(){
-    $('#ticker').innerHTML = mk.map(function(m){
-      var cls=m.d>0?'up':'down', ar=m.d>0?'▲':'▼', val=(m.v%1===0?m.v:m.v.toFixed(1));
-      return '<span class="ti"><span class="lab">'+m.l+'</span><b>'+val+(m.u?' '+m.u:'')+'</b><span class="'+cls+'">'+ar+'</span></span>';
-    }).join('') + '<span class="ti"><span class="lab">INDICATIVE · NOT A QUOTE</span></span>';
-  }
-  drawTicker();
-  if(!rm){setInterval(function(){mk.forEach(function(m){var s=m.v*(Math.random()*0.006-0.003);m.v=Math.max(0,m.v+s);m.d=s>=0?1:-1});drawTicker();},3200);}
 
   // tracker
   var port = CONFIG.destPort;
