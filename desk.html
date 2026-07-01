@@ -26,6 +26,8 @@ textarea{resize:vertical;min-height:64px;line-height:1.4}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold)}
 label .opt{text-transform:none;letter-spacing:0;color:var(--mut);font-weight:400}
 .grouplabel{margin:22px 0 2px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--gold)}
+.deskfoot{margin-top:26px;padding-top:18px;border-top:1px solid var(--line);text-align:center;font-size:13.5px;color:var(--mut);line-height:1.55}
+.deskfoot a{color:var(--gold)}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:18px;padding:13px 18px;border-radius:11px;border:1px solid var(--gold);background:var(--gold);color:#211a0e;font-weight:600;font-size:15px;cursor:pointer;font-family:inherit}
 .btn.ghost{background:transparent;color:var(--gold)}
 .btn:disabled{opacity:.5;cursor:not-allowed}
@@ -72,6 +74,11 @@ label .opt{text-transform:none;letter-spacing:0;color:var(--mut);font-weight:400
 <div class="wrap">
   <div class="tag">AI-driven export quotes — for verified trade buyers.</div>
   <div id="app"><div class="card center muted">Loading…</div></div>
+  <footer class="deskfoot">
+    Didn't find the item you were looking for? Email us at
+    <a href="mailto:trade@delxport.com?subject=Product%20enquiry%20%E2%80%94%20DELxPort">trade@delxport.com</a>
+    and we'll source it for you.
+  </footer>
 </div>
 
 <script>
@@ -96,7 +103,7 @@ const fatal = (title, detail) => { window.__deskBoot = true; app$.innerHTML = `<
 // as a readable message rather than a silent, permanent "Loading…".
 let initializeApp, getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut;
 let getFirestore, doc, getDoc, setDoc, addDoc, collection, serverTimestamp, onSnapshot;
-let firebaseConfig, PRODUCTS, CONTAINERS, HOLD_MINUTES, FREE_EMAIL_RE, NOTIFY_NTFY_TOPIC, NOTIFY_WEBHOOK_URL;
+let firebaseConfig, PRODUCTS, CONTAINERS, HOLD_MINUTES, FREE_EMAIL_RE, NOTIFY_NTFY_TOPIC, NOTIFY_WEBHOOK_URL, SELLER, INVOICE;
 async function loadSDK(){
   // Try Google's CDN first; if it's blocked (extension/network), fall back to jsDelivr.
   const sources = [
@@ -116,7 +123,7 @@ try {
   ({ initializeApp } = A);
   ({ getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut } = Au);
   ({ getFirestore, doc, getDoc, setDoc, addDoc, collection, serverTimestamp, onSnapshot } = Fs);
-  ({ firebaseConfig, PRODUCTS, CONTAINERS, HOLD_MINUTES, FREE_EMAIL_RE, NOTIFY_NTFY_TOPIC, NOTIFY_WEBHOOK_URL } = Cfg);
+  ({ firebaseConfig, PRODUCTS, CONTAINERS, HOLD_MINUTES, FREE_EMAIL_RE, NOTIFY_NTFY_TOPIC, NOTIFY_WEBHOOK_URL, SELLER, INVOICE } = Cfg);
 } catch (e) {
   fatal('Couldn\u2019t reach the sign-in service.',
     'Your browser blocked or failed to load Firebase \u2014 usually an ad-blocker or privacy extension, or a restricted network. '
@@ -270,21 +277,21 @@ function renderPending(prof){
 
 /* ── RFQ option lists (all dropdowns, quick to tap) ── */
 const GRADES = {
-  rice:      ["1121 Golden Sella","1121 Steam","1121 White Sella","1121 Raw","1509 Sella","Sharbati Steam","Sona Masoori","PR11 / PR14 (non-basmati)","Not sure — please advise"],
-  pulses:    ["Chana (chickpeas)","Toor / Arhar","Masoor (red lentil)","Moong (green gram)","Urad (black gram)","Kabuli chana","Yellow peas","Not sure — please advise"],
-  spices:    ["Cumin / Jeera","Coriander seed","Turmeric","Red chilli","Black pepper","Mustard seed","Fennel / Saunf","Mixed — see notes","Not sure — please advise"],
+  rice:      ["1121 Golden Sella","1121 Steam","1121 White Sella","1121 Raw","1509 Sella","Sharbati Steam","Sona Masoori","PR11 / PR14 (non-basmati)"],
+  pulses:    ["Chana (chickpeas)","Toor / Arhar","Masoor (red lentil)","Moong (green gram)","Urad (black gram)","Kabuli chana","Yellow peas"],
+  spices:    ["Cumin / Jeera","Coriander seed","Turmeric","Red chilli","Black pepper","Mustard seed","Fennel / Saunf","Coffee","Tea","Mixed — see notes"],
   groceries: ["Basmati + staples mix","Atta / wheat flour","Sugar","Edible oil","Tea","Papad / snacks","Mixed — see notes"],
   hotels:    ["HORECA mixed container","Bulk staples (rice / pulses / oil)","Custom basket — see notes"]
 };
-const GRADES_DEFAULT = ["Standard grade","Premium grade","Not sure — please advise"];
+const GRADES_DEFAULT = ["Standard grade","Premium grade"];
 const FIELDS = {
   qty:       ["1 container","2 containers","3–5 containers","6–10 containers","10+ containers","Recurring monthly"],
   dest:      ["UAE — Jebel Ali / Dubai","Saudi Arabia — Dammam / Jeddah","Qatar — Hamad","Kuwait — Shuwaikh","Oman — Sohar / Muscat","Bahrain","Singapore","Malaysia — Port Klang","Other — see notes"],
-  incoterm:  ["FOB — Nhava Sheva","CIF — my destination port","CFR / C&F","EXW — Delhi ICD","Not sure — please advise"],
-  packaging: ["PP woven bags (standard)","BOPP printed bags","Non-woven bags","Jute bags","Vacuum pack","Consumer retail packs","Your recommendation"],
+  incoterm:  ["FOB — Nhava Sheva","CIF — my destination port","CFR / C&F","EXW — Delhi ICD"],
+  packaging: ["PP woven bags (standard)","BOPP printed bags","Non-woven bags","Jute bags","Vacuum pack","Consumer retail packs"],
   bag:       ["1 kg","5 kg","10 kg","25 kg","50 kg","Custom size — see notes"],
-  brand:     ["Generic / unbranded","My brand (private label / custom bags)","DELxPort pack","Your recommendation"],
-  payment:   ["100% advance (TT)","LC at sight","30% advance + balance vs docs","Flexible — please advise"],
+  brand:     ["Generic / unbranded","My brand (private label / custom bags)","DELxPort pack"],
+  payment:   ["100% advance (TT)","LC at sight","30% advance + balance vs docs"],
   sample:    ["No — quote the container","Yes — send a sample first"]
 };
 const optsHtml = (arr, sel) => arr.map(o=>`<option value="${esc(o)}"${o===sel?' selected':''}>${esc(o)}</option>`).join('');
@@ -332,7 +339,19 @@ function renderDesk(){
       <div><label>Sample</label><select id="sample">${optsHtml(FIELDS.sample)}</select></div>
     </div>
 
-    <div class="grouplabel">Your details <span class="opt">(optional)</span></div>
+    <div class="grouplabel">Your company <span class="opt">(for your quote / invoice)</span></div>
+    <label>Company name</label>
+    <input id="company" placeholder="Registered company name">
+    <div class="row">
+      <div><label>Contact person</label><input id="contact" placeholder="Full name"></div>
+      <div><label>Country</label><input id="country" placeholder="e.g. UAE"></div>
+    </div>
+    <label>Company address <span class="opt">(prints on the invoice)</span></label>
+    <textarea id="address" placeholder="Street, city, PO box…"></textarea>
+    <label>Import code / Tax ID <span class="opt">(optional)</span></label>
+    <input id="taxid" placeholder="Import licence / VAT / TRN">
+
+    <div class="grouplabel">More <span class="opt">(optional)</span></div>
     <div class="row">
       <div><label>Target price <span class="opt">(optional)</span></label><input id="target" placeholder="e.g. $980/MT"></div>
       <div><label>WhatsApp <span class="opt">(optional)</span></label><input id="wa" placeholder="+971…"></div>
@@ -361,6 +380,8 @@ function renderDesk(){
         grade: v('grade'), quantity: v('qty'), destination: v('dest'),
         incoterms: v('incoterm'), packaging: v('packaging'), bagSize: v('bag'),
         branding: v('brand'), payment: v('payment'), sample: v('sample'),
+        company: v('company'), contact: v('contact'), country: v('country'),
+        address: v('address'), taxid: v('taxid'),
         targetPrice: v('target'), whatsapp: v('wa'), notes: v('notes'),
         status: 'pending', createdAt: serverTimestamp()
       });
@@ -399,16 +420,17 @@ function watchQuote(id){
         stop();
         const totalUsd = (q.fobUsdPerMt * q.mt);
         app$.innerHTML = shell(`<span class="pill" style="border-color:var(--ok);color:var(--ok)">Live quote ready</span>
-          <h1 style="margin-top:12px">${esc(q.productName)}</h1>
-          <div class="muted" style="margin-bottom:14px">${q.container} · ${q.mt} MT · FOB Nhava Sheva</div>
+          <h1 style="margin-top:12px">${esc(q.productName)}${q.grade?` <span style="font-size:14px;color:var(--mut)">· ${esc(q.grade)}</span>`:''}</h1>
+          <div class="muted" style="margin-bottom:14px">${esc(q.container)} · ${q.mt} MT · ${esc(q.incoterms||'FOB Nhava Sheva')}</div>
           <div class="price">$${fmt(q.fobUsdPerMt)}<span style="font-size:15px;color:var(--mut)"> /MT</span></div>
-          <div class="kv"><span>Container total (FOB)</span><b>$${fmt(totalUsd)}</b></div>
-          <div class="kv"><span>Volume</span><b>${q.mt} MT (${q.container})</b></div>
-          <div class="kv"><span>Payment</span><b>100% advance or L/C</b></div>
+          <div class="kv"><span>Container total</span><b>$${fmt(totalUsd)}</b></div>
+          <div class="kv"><span>Volume</span><b>${q.mt} MT (${esc(q.container)})</b></div>
+          <div class="kv"><span>Payment</span><b>${esc(q.payment||'100% advance or L/C')}</b></div>
           ${q.note?`<p style="margin-top:14px">${esc(q.note)}</p>`:''}
-          <button class="btn" id="again">Request another</button>
-          <div class="switch muted">This is your all-in FOB price. Reply to your quote email to book.</div>`);
-        wireAgain(); return;
+          <div id="piwrap" style="margin-top:16px"></div>
+          <button class="btn ghost" id="again" style="margin-top:12px">Request another</button>
+          <div class="switch muted">Download your formal quote below, or reply to your quote email to book.</div>`);
+        wireAgain(); wirePI(q, id); return;
       }
       // still waiting
       const remain = Math.max(0, revealAt - now);
@@ -434,6 +456,148 @@ function watchQuote(id){
 function shell(inner){ return `<div class="card">${inner}</div>`; }
 
 const fmt = n => Number(n).toLocaleString('en-IN',{maximumFractionDigits:0});
+const usd = n => Number(n).toLocaleString('en-US',{maximumFractionDigits:0});
+
+/* ── Proforma Invoice / Quotation PDF (jsPDF, lazy-loaded) ── */
+let _jspdf = null;
+function loadScript(src){ return new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=()=>rej(new Error('load '+src)); document.head.appendChild(s); }); }
+async function loadJsPDF(){
+  if(_jspdf) return _jspdf;
+  const urls=['https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js','https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js'];
+  for(const u of urls){ try{ await loadScript(u); if(window.jspdf&&window.jspdf.jsPDF){ _jspdf=window.jspdf.jsPDF; return _jspdf; } }catch(e){} }
+  throw new Error('jspdf-unavailable');
+}
+function piNumber(id){
+  const d=new Date();
+  const ymd=String(d.getFullYear()).slice(2)+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');
+  const tail=String(id||'').replace(/[^a-zA-Z0-9]/g,'').slice(-5).toUpperCase() || Math.random().toString(36).slice(2,7).toUpperCase();
+  return 'DLX/'+ymd+'/'+tail;
+}
+function buildPI(jsPDF, q, id, docType){
+  const doc=new jsPDF({unit:'mm',format:'a4'});
+  const M=16, W=210, right=W-M, colR=112;
+  const dark=[23,20,15], gold=[176,120,40], mut=[110,100,85], lineC=[214,205,190];
+  let y=18;
+  doc.setFont('helvetica','bold'); doc.setFontSize(21); doc.setTextColor(...dark);
+  doc.text('DEL', M, y);
+  let wx=M+doc.getTextWidth('DEL'); doc.setTextColor(...gold); doc.text('x', wx, y);
+  wx+=doc.getTextWidth('x'); doc.setTextColor(...dark); doc.text('Port', wx, y);
+  doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(...mut);
+  doc.text(SELLER.legalName+' · '+SELLER.website, M, y+5.5);
+  doc.setFont('helvetica','bold'); doc.setFontSize(15); doc.setTextColor(...dark);
+  doc.text(docType.toUpperCase(), right, y, {align:'right'});
+  doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(...mut);
+  const dt=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  doc.text('No.  '+piNumber(id), right, y+5.5, {align:'right'});
+  doc.text('Date: '+dt, right, y+10, {align:'right'});
+  y+=17; doc.setDrawColor(...lineC); doc.line(M,y,right,y); y+=7;
+
+  doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(...gold);
+  doc.text('EXPORTER / SELLER', M, y); doc.text('BUYER / CONSIGNEE', colR, y); y+=5;
+  doc.setFont('helvetica','bold'); doc.setFontSize(10.5); doc.setTextColor(...dark);
+  doc.text(SELLER.brand+' — '+SELLER.legalName, M, y);
+  doc.text(doc.splitTextToSize(q.company||q.email||'Buyer', right-colR), colR, y); y+=5;
+  doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(...mut);
+  const sLines=[SELLER.address,SELLER.city,SELLER.iec,SELLER.apeda,SELLER.gstin,'E: '+SELLER.email,'T: '+SELLER.phone].filter(Boolean);
+  const bLines=[q.contact,q.address,q.country,q.taxid?('Import/Tax ID: '+q.taxid):'',q.email?('E: '+q.email):'',q.whatsapp?('T: '+q.whatsapp):''].filter(Boolean);
+  let ys=y,yb=y;
+  sLines.forEach(t=>{ const w=doc.splitTextToSize(String(t),colR-M-6); doc.text(w,M,ys); ys+=4.5*w.length; });
+  bLines.forEach(t=>{ const w=doc.splitTextToSize(String(t),right-colR); doc.text(w,colR,yb); yb+=4.5*w.length; });
+  y=Math.max(ys,yb)+3; doc.setDrawColor(...lineC); doc.line(M,y,right,y); y+=8;
+
+  doc.setFillColor(...dark); doc.rect(M,y-5,right-M,8,'F');
+  doc.setTextColor(244,236,221); doc.setFont('helvetica','bold'); doc.setFontSize(8.5);
+  doc.text('DESCRIPTION',M+2,y); doc.text('QTY',118,y); doc.text('RATE',150,y);
+  doc.text('AMOUNT ('+INVOICE.currency+')',right-2,y,{align:'right'}); y+=8;
+  doc.setTextColor(...dark); doc.setFont('helvetica','bold'); doc.setFontSize(10);
+  doc.text(doc.splitTextToSize(q.productName||q.product||'Product',96),M+2,y);
+  doc.setFont('helvetica','normal'); doc.setFontSize(9.5);
+  doc.text(q.mt+' MT',118,y); doc.text('$'+usd(q.fobUsdPerMt)+'/MT',150,y);
+  const amount=q.fobUsdPerMt*q.mt;
+  doc.text('$'+usd(amount),right-2,y,{align:'right'}); y+=6;
+  doc.setFontSize(8.5); doc.setTextColor(...mut);
+  const specs=[];
+  if(q.grade) specs.push('Grade: '+q.grade);
+  if(q.packaging) specs.push('Packing: '+q.packaging+(q.bagSize?(' · '+q.bagSize):''));
+  if(q.branding) specs.push('Branding: '+q.branding);
+  if(q.quantity) specs.push('Order size: '+q.quantity);
+  if(specs.length){ const w=doc.splitTextToSize(specs.join('     '),right-M-4); doc.text(w,M+2,y); y+=4.4*w.length; }
+  y+=2; doc.setDrawColor(...lineC); doc.line(M,y,right,y); y+=7;
+  doc.setFont('helvetica','normal'); doc.setFontSize(9.5); doc.setTextColor(...mut);
+  doc.text('Total ('+(q.incoterms||'FOB')+')',right-54,y);
+  doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(...dark);
+  doc.text('$'+usd(amount)+' '+INVOICE.currency,right-2,y,{align:'right'}); y+=9;
+
+  doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(...gold);
+  doc.text('TERMS',M,y); y+=5;
+  const term=(l,v)=>{ doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(...mut); doc.text(l,M,y);
+    doc.setTextColor(...dark); const w=doc.splitTextToSize(String(v||'—'),right-M-42); doc.text(w,M+42,y); y+=4.8*w.length; };
+  term('Price basis', q.incoterms||'FOB Nhava Sheva');
+  term('Loading port', INVOICE.loadingPort);
+  if(q.destination) term('Destination', q.destination);
+  term('Payment', q.payment||'100% advance (TT) or LC at sight');
+  term('Validity', INVOICE.validityDays+' days from date of issue');
+  if(q.note) term('Note', q.note);
+  y+=2;
+
+  if(docType==='Proforma Invoice'){
+    doc.setDrawColor(...lineC); doc.line(M,y,right,y); y+=6;
+    doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(...gold);
+    doc.text('BENEFICIARY BANK',M,y); y+=5;
+    doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(...dark);
+    [SELLER.brand+' — '+SELLER.legalName, SELLER.bankName+' · '+SELLER.bankBranch,
+     'A/C: '+SELLER.bankAccount+'    IFSC: '+SELLER.bankIfsc, 'SWIFT: '+SELLER.bankSwift]
+      .forEach(t=>{ doc.text(String(t),M,y); y+=4.8; });
+    y+=2;
+  }
+
+  doc.setDrawColor(...lineC); doc.line(M,y,right,y); y+=6;
+  doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...mut);
+  const rem = docType==='Quotation'
+    ? 'This is a quotation, not an invoice. '+INVOICE.remarks
+    : 'Proforma invoice for buyer reference (LC / import permit). Not a demand for payment. '+INVOICE.remarks;
+  const rw=doc.splitTextToSize(rem,right-M); doc.text(rw,M,y); y+=4.4*rw.length+8;
+  doc.setTextColor(...dark); doc.setFontSize(9);
+  doc.text('For '+SELLER.brand+' — '+SELLER.legalName, right, y, {align:'right'});
+  y+=12; doc.setDrawColor(...mut); doc.line(right-52,y,right,y); y+=4;
+  doc.setFontSize(8); doc.setTextColor(...mut); doc.text('Authorised signatory', right, y, {align:'right'});
+
+  const who=q.company?q.company.replace(/[^a-zA-Z0-9]+/g,'-').slice(0,24):'DELxPort';
+  doc.save(docType.replace(/\s+/g,'-')+'-'+who+'.pdf');
+}
+async function makePDF(q, id, docType){
+  const m=document.getElementById('pimsg');
+  const setMsg=(cls,txt)=>{ if(m){ m.className='msg '+(cls||''); m.style.display='block'; m.textContent=txt; } };
+  setMsg('', 'Preparing '+docType+'…');
+  try{ const jsPDF=await loadJsPDF(); buildPI(jsPDF, q, id, docType); if(m){ m.style.display='none'; } }
+  catch(e){ setMsg('err','Couldn\u2019t generate the PDF — a blocker or network may be stopping it. Try again or another browser.'); }
+}
+function wirePI(q, id){
+  const wrap=document.getElementById('piwrap'); if(!wrap) return;
+  const buttons=`<div class="row"><button class="btn" id="dlpi">Proforma Invoice (PDF)</button><button class="btn ghost" id="dlq">Quotation (PDF)</button></div><div class="msg" id="pimsg"></div>`;
+  if(q.company){
+    wrap.innerHTML=buttons;
+    document.getElementById('dlpi').onclick=()=>makePDF(q,id,'Proforma Invoice');
+    document.getElementById('dlq').onclick =()=>makePDF(q,id,'Quotation');
+  } else {
+    wrap.innerHTML=`<div class="card" style="margin:0;padding:16px;background:var(--ink3)">
+      <div style="font-size:14px;color:var(--ivory);margin-bottom:4px">Add your company details to download a formal Proforma Invoice or Quotation.</div>
+      <label>Company name</label><input id="c_company" placeholder="Registered company name">
+      <div class="row"><div><label>Contact person</label><input id="c_contact"></div><div><label>Country</label><input id="c_country"></div></div>
+      <label>Company address</label><textarea id="c_address"></textarea>
+      ${buttons}</div>`;
+    const go=(type)=>{
+      const c={ company:(document.getElementById('c_company').value||'').trim(),
+                contact:(document.getElementById('c_contact').value||'').trim(),
+                country:(document.getElementById('c_country').value||'').trim(),
+                address:(document.getElementById('c_address').value||'').trim() };
+      if(!c.company){ const m=document.getElementById('pimsg'); m.className='msg err'; m.style.display='block'; m.textContent='Enter your company name for the invoice.'; return; }
+      makePDF({...q, ...c}, id, type);
+    };
+    document.getElementById('dlpi').onclick=()=>go('Proforma Invoice');
+    document.getElementById('dlq').onclick =()=>go('Quotation');
+  }
+}
 
 // Fire-and-forget admin alert when a quote is placed (works even if admin console is closed).
 function notifyAdmin(q){
