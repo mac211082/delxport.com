@@ -24,6 +24,8 @@ label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.08em
 input,select,textarea{width:100%;background:var(--ink3);border:1px solid var(--line);color:var(--ivory);border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit}
 textarea{resize:vertical;min-height:64px;line-height:1.4}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold)}
+select optgroup{background:var(--ink3);color:var(--gold);font-style:normal;font-weight:600}
+select option{background:var(--ink3);color:var(--ivory);font-weight:400}
 label .opt{text-transform:none;letter-spacing:0;color:var(--mut);font-weight:400}
 .grouplabel{margin:22px 0 2px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--gold)}
 .deskfoot{margin-top:26px;padding-top:18px;border-top:1px solid var(--line);text-align:center;font-size:13.5px;color:var(--mut);line-height:1.55}
@@ -277,13 +279,45 @@ function renderPending(prof){
 
 /* ── RFQ option lists (all dropdowns, quick to tap) ── */
 const GRADES = {
-  rice:      ["1121 Golden Sella","1121 Steam","1121 White Sella","1121 Raw","1509 Sella","Sharbati Steam","Sona Masoori","PR11 / PR14 (non-basmati)"],
-  pulses:    ["Chana (chickpeas)","Toor / Arhar","Masoor (red lentil)","Moong (green gram)","Urad (black gram)","Kabuli chana","Yellow peas"],
-  spices:    ["Cumin / Jeera","Coriander seed","Turmeric","Red chilli","Black pepper","Mustard seed","Fennel / Saunf","Coffee","Tea","Mixed — see notes"],
-  groceries: ["Basmati + staples mix","Atta / wheat flour","Sugar","Edible oil","Tea","Papad / snacks","Mixed — see notes"],
-  hotels:    ["HORECA mixed container","Bulk staples (rice / pulses / oil)","Custom basket — see notes"]
+  rice: [
+    ["1121 Basmati", ["1121 Golden Sella","1121 Steam","1121 White Sella","1121 Raw"]],
+    ["1509 Basmati", ["1509 Golden Sella","1509 Steam","1509 White Sella","1509 Raw"]],
+    ["Other Basmati", ["Pusa Basmati Sella","Pusa Basmati Steam","Traditional Basmati","Sugandha Sella","Sharbati Steam","Sharbati Sella"]],
+    ["Non-Basmati", ["Sona Masoori","IR64 Parboiled","IR64 5% broken","IR64 25% broken","PR11 / PR14 Sella","Swarna Parboiled","Ponni Boiled","100% Broken rice"]],
+    ["Other", ["Other rice — see notes"]]
+  ],
+  pulses: [
+    ["Chana (chickpea)", ["Chana whole (desi)","Chana Dal (split)","Kabuli Chana 42/44","Kabuli Chana 58/60","Kabuli Chana 12mm"]],
+    ["Toor / Arhar", ["Toor whole","Toor Dal (split)"]],
+    ["Masoor (lentil)", ["Masoor whole (brown)","Football Masoor (Malka)","Masoor Dal (red split)"]],
+    ["Moong", ["Moong whole (green)","Moong Dal (split)","Moong Dal washed (dhuli)"]],
+    ["Urad", ["Urad whole (black)","Urad Dal (split)","Urad Dal washed (white)"]],
+    ["Other pulses", ["Rajma (kidney beans)","Green peas (whole)","Yellow peas (split)","Lobia (cowpea)","Kulthi (horse gram)","Other pulse — see notes"]]
+  ],
+  spices: [
+    ["Cumin / Jeera", ["Cumin 99% machine clean","Cumin Singapore 99%","Cumin Europe 99.5%","Cumin sortex"]],
+    ["Coriander / Dhania", ["Coriander Eagle","Coriander Scooter","Coriander Double Parrot","Coriander powder"]],
+    ["Turmeric / Haldi", ["Turmeric finger (Salem)","Turmeric finger (Nizamabad)","Turmeric bulb","Turmeric powder"]],
+    ["Red Chilli", ["Teja S17 (stemless)","Guntur Sannam 334","Byadgi","Kashmiri","Chilli powder"]],
+    ["Black Pepper", ["Malabar Garbled MG1","Pepper 500 g/l","Pepper 550 g/l","Pepper powder"]],
+    ["Other spices", ["Mustard (black)","Mustard (yellow)","Fennel / Saunf","Fenugreek / Methi","Carom / Ajwain","Cardamom green bold","Cloves","Cinnamon","Dry ginger","Sesame seeds"]],
+    ["Coffee", ["Arabica Plantation A","Arabica Plantation B","Robusta Cherry AB","Green coffee beans","Roasted coffee"]],
+    ["Tea", ["Assam CTC","Darjeeling","Nilgiri","Green tea","Orthodox leaf"]],
+    ["Cashew / nuts", ["Cashew W320","Cashew W240","Cashew W180","Cashew W210","Cashew W450","Cashew splits (LWP)","Cashew pieces (SWP)","Cashew scorched (SW)"]],
+    ["Other", ["Other spice — see notes"]]
+  ],
+  groceries: [
+    ["Flours", ["Whole-wheat Atta (chakki)","Maida","Suji / Semolina","Besan (gram flour)"]],
+    ["Sweeteners", ["Sugar S30","Sugar M30","Refined sugar","Jaggery"]],
+    ["Edible oils", ["Mustard oil","Sunflower oil","Groundnut oil","Soybean oil","Coconut oil"]],
+    ["Ready / packaged", ["Papad","Pickles / Achar","Spice blends (garam masala etc.)","Instant mixes","Namkeen / snacks","Ghee"]],
+    ["Other", ["Iodised salt","Basmati + staples mix","Other item — see notes"]]
+  ],
+  hotels: [
+    ["Hotel container", ["HORECA mixed container","Bulk staples (rice / pulses / oil)","Custom basket — see notes"]]
+  ]
 };
-const GRADES_DEFAULT = ["Standard grade","Premium grade"];
+const GRADES_DEFAULT = [["Grade", ["Standard grade","Premium grade"]]];
 const FIELDS = {
   qty:       ["1 container","2 containers","3–5 containers","6–10 containers","10+ containers","Recurring monthly"],
   dest:      ["UAE — Jebel Ali / Dubai","Saudi Arabia — Dammam / Jeddah","Qatar — Hamad","Kuwait — Shuwaikh","Oman — Sohar / Muscat","Bahrain","Singapore","Malaysia — Port Klang","Other — see notes"],
@@ -295,7 +329,12 @@ const FIELDS = {
   sample:    ["No — quote the container","Yes — send a sample first"]
 };
 const optsHtml = (arr, sel) => arr.map(o=>`<option value="${esc(o)}"${o===sel?' selected':''}>${esc(o)}</option>`).join('');
-function gradesFor(p){ return GRADES[p] || GRADES_DEFAULT; }
+function gradeOpts(product, sel){
+  const groups = GRADES[product] || GRADES_DEFAULT;
+  return groups.map(([label, items]) =>
+    `<optgroup label="${esc(label)}">`+items.map(o=>`<option value="${esc(o)}"${o===sel?' selected':''}>${esc(o)}</option>`).join('')+`</optgroup>`
+  ).join('');
+}
 
 /* ── The desk ── */
 function renderDesk(){
@@ -311,7 +350,7 @@ function renderDesk(){
     <label>What do you want to import</label>
     <select id="prod">${prodOpts}</select>
     <label>Grade / variety</label>
-    <select id="grade">${optsHtml(gradesFor(startProd))}</select>
+    <select id="grade">${gradeOpts(startProd)}</select>
 
     <div class="grouplabel">Order size</div>
     <div class="row">
@@ -365,7 +404,7 @@ function renderDesk(){
 
   // Grade options follow the selected product
   const prodSel = document.getElementById('prod');
-  prodSel.onchange = ()=>{ document.getElementById('grade').innerHTML = optsHtml(gradesFor(prodSel.value)); };
+  prodSel.onchange = ()=>{ document.getElementById('grade').innerHTML = gradeOpts(prodSel.value); };
 
   const v = id => (document.getElementById(id)?.value || '').trim();
   document.getElementById('go').onclick = async ()=>{
