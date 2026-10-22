@@ -22,3 +22,19 @@
   from = "/hotels"
   to = "/delxport-hotels.html"
   status = 301
+[[redirects]]
+  from = "/fresh"
+  to = "/delxport-fresh.html"
+  status = 301
+[[redirects]]
+  from = "/private-label"
+  to = "/delxport-private-label.html"
+  status = 301
+[[redirects]]
+  from = "/contact"
+  to = "/about.html"
+  status = 301
+[[redirects]]
+  from = "/rfq"
+  to = "/about.html#rfq"
+  status = 301
