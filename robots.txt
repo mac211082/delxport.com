@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /desk.html
+Sitemap: https://delxport.com/sitemap.xml

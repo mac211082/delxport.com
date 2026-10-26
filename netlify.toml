@@ -38,3 +38,7 @@
   from = "/rfq"
   to = "/about.html#rfq"
   status = 301
+[[redirects]]
+  from = "/blog"
+  to = "/blog.html"
+  status = 301

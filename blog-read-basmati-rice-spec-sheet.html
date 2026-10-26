@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to Read a Basmati Spec Sheet: AGL, Broken %, Moisture and Purity — DELxPort</title>
+<meta name="description" content="Read a basmati rice spec sheet line by line: average grain length, moisture, broken, damaged, chalky and admixture limits, and what to put in the contract.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#17140F; --ink2:#1E1A13; --ink3:#262019; --ink4:#2F2820;
+  --ivory:#F3EBDD; --dim:#C7BDAB; --faint:#9A8F7C;
+  --gold:#E3A230; --gold-soft:#F0C878;
+  --jute:#A9855A; --sage:#6FB49A; --rust:#C6603C; --wa:#25D366;
+  --line:rgba(243,235,221,.10); --line2:rgba(243,235,221,.06);
+  --disp:"Fraunces",Georgia,serif; --ui:"Space Grotesk",system-ui,sans-serif; --mono:"IBM Plex Mono",monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ink);color:var(--ivory);font-family:var(--ui);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+h1,h2,h3{margin:0;font-family:var(--disp);font-weight:500;letter-spacing:-.01em;line-height:1.05}
+.wrap{max-width:1180px;margin:0 auto;padding:0 26px}
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);font-weight:500}
+.mono{font-family:var(--mono)}
+.topbar{position:sticky;top:0;z-index:60;background:rgba(23,20,15,.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.topbar .wrap{display:flex;align-items:center;gap:24px;height:66px}
+.brand{display:flex;flex-direction:column;line-height:1}
+.brand b{font-family:var(--disp);font-weight:600;font-size:21px;letter-spacing:-.02em}
+.brand b span{color:var(--gold)}
+.brand small{font-family:var(--mono);font-size:9.5px;letter-spacing:.28em;text-transform:uppercase;color:var(--faint);margin-top:3px}
+.nav{margin-left:auto;display:flex;gap:22px;align-items:center}
+.nav a{font-size:13.5px;color:var(--dim);transition:color .2s}
+.nav a:hover,.nav a.here{color:var(--gold)}
+.wa-btn{display:inline-flex;align-items:center;gap:8px;background:var(--wa);color:#06331a;font-weight:600;font-size:13.5px;padding:9px 15px;border-radius:999px;transition:transform .15s,box-shadow .2s}
+.wa-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px -8px rgba(37,211,102,.6)}
+.wa-btn svg{width:15px;height:15px}
+@media(max-width:920px){.nav a:not(.wa-btn){display:none}}
+.hero{position:relative;padding:72px 0 54px}
+.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 82% -10%,color-mix(in srgb,var(--gold) 16%,transparent),transparent 55%),radial-gradient(80% 70% at -10% 30%,rgba(169,133,90,.10),transparent 60%);pointer-events:none}
+.hero .wrap{position:relative}
+.hero-grid{display:grid;grid-template-columns:1.12fr .88fr;gap:46px;align-items:center}
+.hero-media{position:relative}
+.hero-media img{width:100%;height:clamp(280px,40vw,438px);object-fit:cover;border-radius:18px;border:1px solid var(--line);display:block;box-shadow:0 40px 84px -46px rgba(0,0,0,.85)}
+.hero-media::after{content:"";position:absolute;inset:0;border-radius:18px;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--gold) 24%,transparent);pointer-events:none}
+@media(max-width:860px){.hero-grid{grid-template-columns:1fr;gap:30px}.hero-media img{height:clamp(220px,58vw,320px)}}
+.hero h1{font-size:clamp(36px,5.6vw,64px);max-width:16ch;margin:18px 0 0}
+.hero h1 em{font-style:italic;color:var(--gold-soft)}
+.lede{margin:22px 0 0;max-width:58ch;font-size:clamp(16px,1.7vw,18px);color:var(--dim)}
+.cta-row{margin-top:30px;display:flex;flex-wrap:wrap;gap:13px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:9px;font-family:var(--ui);font-weight:600;font-size:14.5px;padding:13px 21px;border-radius:11px;cursor:pointer;border:1px solid transparent;transition:transform .15s,background .2s,border-color .2s}
+.btn-gold{background:var(--gold);color:#2a1c04}
+.btn-gold:hover{transform:translateY(-2px);background:var(--gold-soft)}
+.btn-ghost{background:transparent;border-color:var(--line);color:var(--ivory)}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold-soft)}
+.hero-badges{margin-top:28px;display:flex;flex-wrap:wrap;gap:8px}
+.pill{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--dim);border:1px solid var(--line);border-radius:999px;padding:6px 12px}
+.pill b{color:var(--gold);font-weight:500}
+.payline{margin-top:18px;display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12.5px;color:var(--ivory);background:color-mix(in srgb,var(--gold) 12%,var(--ink3));border:1px solid color-mix(in srgb,var(--gold) 35%,transparent);border-radius:11px;padding:10px 16px}
+.payline b{color:var(--gold);letter-spacing:.12em;text-transform:uppercase;font-size:10.5px}
+.payline svg{width:15px;height:15px;color:var(--gold)}
+.section{padding:60px 0;border-top:1px solid var(--line2)}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:28px;flex-wrap:wrap}
+.sec-head h2{font-size:clamp(26px,3.4vw,37px);max-width:20ch}
+.sec-head p{color:var(--dim);max-width:44ch;font-size:15px;margin:0}
+.board{background:linear-gradient(180deg,var(--ink2),var(--ink));border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 40px 90px -50px rgba(0,0,0,.9)}
+.board-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:16px 22px;border-bottom:1px solid var(--line);background:var(--ink3)}
+.live{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--sage)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--sage);animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(111,180,154,.55)}70%{box-shadow:0 0 0 9px rgba(111,180,154,0)}100%{box-shadow:0 0 0 0 rgba(111,180,154,0)}}
+.board-sku{font-family:var(--mono);font-size:12.5px;color:var(--dim);letter-spacing:.04em}
+.board-sku b{color:var(--ivory)}
+.viewtog{margin-left:auto;display:inline-flex;background:var(--ink);border:1px solid var(--line);border-radius:999px;padding:3px}
+.viewtog button{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);background:none;border:none;padding:7px 13px;border-radius:999px;cursor:pointer;transition:.2s}
+.viewtog button.on{background:var(--gold);color:#2a1c04;font-weight:600}
+.board-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:0}
+@media(max-width:840px){.board-grid{grid-template-columns:1fr}}
+.board-in{padding:22px;border-right:1px solid var(--line)}
+@media(max-width:840px){.board-in{border-right:none;border-bottom:1px solid var(--line)}}
+.in-lab{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin:0 0 14px}
+.field{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--line2)}
+.field label{font-size:13.5px;color:var(--dim)}
+.fxtag{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);border:1px solid var(--line);border-radius:5px;padding:2px 5px;margin-left:6px;vertical-align:1px}
+.fxtag.on{color:var(--sage);border-color:color-mix(in srgb,var(--sage) 40%,transparent)}
+.inbox{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:14px;background:var(--ink3);border:1px solid var(--line);border-radius:9px;padding:6px 10px}
+.inbox span{color:var(--faint);font-size:12px}
+.inbox input{width:82px;background:none;border:none;color:var(--gold-soft);font-family:var(--mono);font-size:14px;text-align:right;font-weight:500}
+.inbox input:focus{outline:none;color:#fff}
+.inbox input.locked{color:var(--faint)}
+.rows{padding:22px;display:flex;flex-direction:column;gap:2px}
+.rr{display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:10px 0;border-bottom:1px solid var(--line2)}
+.rr .k{display:flex;flex-direction:column}
+.rr .k b{font-weight:500;font-size:13.5px;letter-spacing:.02em}
+.rr .k small{font-family:var(--mono);font-size:10.5px;color:var(--faint);letter-spacing:.04em}
+.rr .v{font-family:var(--mono);font-size:15px;color:var(--ivory);font-weight:500}
+.rr.total{margin-top:8px;padding-top:16px;border-top:1px solid var(--line);border-bottom:none}
+.rr.total .k b{font-family:var(--disp);font-size:16px}
+.rr.hero-row .v{font-size:22px;color:var(--gold);font-weight:600}
+.rr.net .v{color:var(--sage)}
+.owner-only.hidden{display:none}
+.board-foot{padding:12px 22px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--faint);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.bincl{font-family:var(--mono);font-size:12px;color:var(--sage)}
+.board.buyer .bincl{display:inline} .bincl{display:none}
+.board.buyer .bcost{display:none}
+.ticker{margin-top:16px;border:1px solid var(--line);border-radius:12px;background:var(--ink2);display:flex;gap:26px;padding:11px 18px;overflow-x:auto;font-family:var(--mono);font-size:12px;color:var(--dim);scrollbar-width:none}
+.ticker::-webkit-scrollbar{display:none}
+.ti{display:flex;align-items:center;gap:8px;white-space:nowrap}
+.ti b{color:var(--ivory);font-weight:500}
+.ti .up{color:var(--sage)} .ti .down{color:var(--rust)} .ti .lab{color:var(--faint);letter-spacing:.08em}
+.payband{border:1px solid color-mix(in srgb,var(--gold) 28%,transparent);border-radius:16px;background:linear-gradient(180deg,color-mix(in srgb,var(--gold) 8%,var(--ink2)),var(--ink));padding:26px 24px;display:flex;gap:26px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.payband .pb-l{max-width:60ch}
+.payband h3{font-size:22px;margin-bottom:8px}
+.payband p{margin:0;color:var(--dim);font-size:14.5px}
+.payband .pb-terms{display:flex;gap:12px;flex-wrap:wrap}
+.term{font-family:var(--mono);font-size:12.5px;color:var(--ivory);border:1px solid var(--line);border-radius:10px;padding:12px 15px;background:var(--ink3)}
+.term b{color:var(--gold);display:block;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:5px}
+.track{background:linear-gradient(180deg,var(--ink2),var(--ink));border:1px solid var(--line);border-radius:20px;overflow:hidden}
+.track-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:16px 22px;border-bottom:1px solid var(--line);background:var(--ink3)}
+.track-top .board-sku{margin-right:auto}
+.eta{font-family:var(--mono);font-size:12px;color:var(--dim)}
+.eta b{color:var(--gold-soft)}
+.stepper{padding:26px 22px 8px;display:flex;gap:0;position:relative}
+.step{flex:1;position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:9px;min-width:0}
+.step .bar{position:absolute;top:11px;left:-50%;width:100%;height:2px;background:var(--line)}
+.step:first-child .bar{display:none}
+.step .bar.done{background:var(--gold)}
+.step .node{width:24px;height:24px;border-radius:50%;border:2px solid var(--line);background:var(--ink);display:grid;place-items:center;font-family:var(--mono);font-size:10px;color:var(--faint);position:relative;z-index:2;transition:.3s}
+.step.done .node{border-color:var(--gold);background:var(--gold);color:#2a1c04}
+.step.active .node{border-color:var(--gold);background:var(--ink);color:var(--gold);animation:pulse2 1.8s infinite}
+@keyframes pulse2{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--gold) 45%,transparent)}70%{box-shadow:0 0 0 8px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.step .slab{font-size:10.5px;color:var(--faint);line-height:1.25;max-width:11ch}
+.step.done .slab{color:var(--dim)} .step.active .slab{color:var(--ivory)}
+@media(max-width:820px){
+  .stepper{flex-direction:column;gap:0;padding:20px 22px 6px}
+  .step{flex-direction:row;align-items:flex-start;text-align:left;gap:14px;padding:0 0 18px;justify-content:flex-start}
+  .step .bar{top:0;left:11px;width:2px;height:100%}
+  .step .slab{max-width:none;padding-top:2px}
+}
+.track-mid{display:grid;grid-template-columns:1fr .9fr;gap:0;border-top:1px solid var(--line);margin-top:14px}
+@media(max-width:760px){.track-mid{grid-template-columns:1fr}}
+.feed{padding:20px 22px}
+.feed h4{margin:0 0 14px;font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint)}
+.fl{display:flex;gap:12px;padding:9px 0;border-bottom:1px solid var(--line2);font-size:13px;color:var(--dim);animation:slidein .4s ease}
+@keyframes slidein{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.fl .fi{flex:none;margin-top:2px} .fl .fi.ok{color:var(--sage)} .fl .fi.now{color:var(--gold)}
+.fl b{color:var(--ivory);font-weight:500}
+.fl .ch{font-family:var(--mono);font-size:10px;letter-spacing:.04em;color:var(--faint);display:block;margin-top:2px}
+.fl .ch .wa{color:var(--wa)}
+.track-side{padding:20px 22px;border-left:1px solid var(--line);display:flex;flex-direction:column;gap:14px}
+@media(max-width:760px){.track-side{border-left:none;border-top:1px solid var(--line)}}
+.chan{display:flex;align-items:center;gap:11px;font-size:13px;color:var(--dim)}
+.chan .ic{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;flex:none;background:var(--ink3);border:1px solid var(--line)}
+.chan .ic.wa{background:rgba(37,211,102,.14);border-color:rgba(37,211,102,.3)}
+.chan b{color:var(--ivory);font-weight:500;display:block;font-size:13px}
+.track-foot{padding:14px 22px;border-top:1px solid var(--line);display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.demo-btn{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;background:var(--ink3);border:1px solid var(--line);color:var(--gold-soft);padding:9px 15px;border-radius:9px;cursor:pointer;transition:.2s}
+.demo-btn:hover{border-color:var(--gold)}
+.track-foot small{font-family:var(--mono);font-size:10.5px;color:var(--faint)}
+.reach{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:820px){.reach{grid-template-columns:1fr}}
+.rc{background:var(--ink2);border:1px solid var(--line);border-radius:16px;padding:26px 22px;transition:transform .2s,border-color .2s}
+.rc:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--gold) 35%,transparent)}
+.rc .ico{width:42px;height:42px;border-radius:11px;background:var(--ink3);border:1px solid var(--line);display:grid;place-items:center;color:var(--gold);margin-bottom:16px}
+.rc h3{font-size:19px;margin-bottom:8px}
+.rc p{margin:0;color:var(--dim);font-size:14px}
+.assure{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:920px){.assure{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.assure{grid-template-columns:1fr}}
+.ac{border:1px solid var(--line);border-radius:14px;padding:22px 20px;background:linear-gradient(180deg,var(--ink2),transparent)}
+.ac .n{font-family:var(--mono);font-size:11px;color:var(--gold);letter-spacing:.14em}
+.ac h3{font-size:17px;margin:12px 0 8px}
+.ac p{margin:0;color:var(--dim);font-size:13.5px}
+.certs{border-top:1px solid var(--line2);border-bottom:1px solid var(--line2);padding:22px 0;overflow:hidden}
+.certrow{display:flex;gap:44px;align-items:center;font-family:var(--mono);font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);white-space:nowrap;width:max-content;animation:marq 26s linear infinite}
+@keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.certrow span{display:inline-flex;align-items:center;gap:44px}
+.certrow b{color:var(--dim);font-weight:400}
+.ctaband{text-align:center;padding:74px 0}
+.ctaband h2{font-size:clamp(28px,4.4vw,45px);max-width:20ch;margin:0 auto}
+.ctaband p{color:var(--dim);max-width:48ch;margin:16px auto 0}
+.ctaband .cta-row{justify-content:center}
+.foot{border-top:1px solid var(--line);padding:44px 0 40px;color:var(--faint)}
+.foot .wrap{display:flex;gap:30px;flex-wrap:wrap;justify-content:space-between;align-items:flex-start}
+.foot .fmeta{font-family:var(--mono);font-size:11.5px;line-height:1.9;letter-spacing:.03em}
+.foot .fmeta b{color:var(--dim);font-weight:500}
+.foot .fnav{display:flex;gap:26px;font-size:13.5px;flex-wrap:wrap}
+.foot .fnav a{color:var(--dim)}
+.foot-legal{max-width:1180px;margin:36px auto 0;padding:24px 26px 0;border-top:1px solid var(--line2)}
+.foot-legal p{margin:0;font-family:var(--mono);font-size:11px;line-height:1.75;letter-spacing:.02em;color:var(--faint)}
+.foot-legal p.rec{max-width:92ch} .foot-legal p.cw{margin-top:12px} .foot-legal b{color:var(--dim);font-weight:500}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--wa);color:#06331a;font-weight:600;font-size:13.5px;padding:11px 18px;border-radius:999px;display:flex;gap:9px;align-items:center;box-shadow:0 14px 40px -12px rgba(37,211,102,.6);opacity:0;pointer-events:none;transition:.35s;z-index:90}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:4px}
+
+.collage{display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:16px}
+.pcard{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--ink2);transition:transform .2s,border-color .2s}
+.pcard:hover{transform:translateY(-4px);border-color:color-mix(in srgb,var(--a) 50%,transparent)}
+.pcard-img{position:relative;height:150px;display:grid;place-items:center;background:color-mix(in srgb,var(--a) 13%,var(--ink3));color:var(--a);border-bottom:1px solid var(--line);overflow:hidden}
+.pcard-img svg{width:58px;height:58px;position:absolute}
+.pcard-img img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;display:block}
+.pcard-img::after{content:"";position:absolute;inset:0;z-index:2;background:linear-gradient(180deg,transparent 52%,rgba(23,20,15,.5));pointer-events:none}
+.pcard-body{padding:18px 20px 20px;display:flex;flex-direction:column;gap:6px;flex:1}
+.pcard-tag{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--a)}
+.pcard h3{font-size:20px}
+.pcard p{margin:0;color:var(--dim);font-size:13.5px;flex:1}
+.pcard-go{margin-top:10px;font-family:var(--ui);font-weight:600;font-size:13.5px;color:var(--a);display:inline-flex;align-items:center;gap:6px}
+.proc{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:18px 14px}
+.pstep{display:flex;flex-direction:column;gap:9px;align-items:flex-start}
+.pstep .pn{width:32px;height:32px;border-radius:50%;border:2px solid var(--gold);color:var(--gold);display:grid;place-items:center;font-family:var(--mono);font-size:12px;background:var(--ink)}
+.pstep .pt{font-size:14px;font-weight:500;color:var(--ivory);line-height:1.3}
+.pstep .ps{font-family:var(--mono);font-size:10.5px;color:var(--faint);letter-spacing:.04em}
+.proc-note{margin-top:22px;font-family:var(--mono);font-size:11.5px;color:var(--faint);display:inline-flex;align-items:center;gap:8px}
+.proc-note b{color:var(--wa)}
+.gate{display:grid;grid-template-columns:1.35fr .8fr;gap:34px;align-items:center;background:linear-gradient(180deg,var(--ink2),var(--ink3));border:1px solid var(--line);border-radius:20px;padding:38px}
+.gate-lock{display:inline-flex;width:48px;height:48px;align-items:center;justify-content:center;border-radius:13px;background:color-mix(in srgb,var(--gold) 15%,transparent);color:var(--gold);border:1px solid color-mix(in srgb,var(--gold) 38%,transparent);margin-bottom:16px}
+.gate h2{font-size:clamp(23px,3vw,31px);line-height:1.12;margin:0 0 12px}
+.gate p{color:var(--dim);margin:0 0 20px;max-width:54ch;font-size:15px;line-height:1.6}
+.gate-steps{display:flex;flex-direction:column;gap:12px}
+.gs{display:flex;align-items:center;gap:13px;background:var(--ink);border:1px solid var(--line);border-radius:13px;padding:13px 15px}
+.gs b{flex:none;width:27px;height:27px;display:grid;place-items:center;border-radius:50%;background:var(--gold);color:#211a0e;font-size:13px;font-weight:700}
+.gs span{font-size:13.5px;color:var(--ivory);line-height:1.35}
+@media(max-width:760px){.gate{grid-template-columns:1fr;padding:26px;gap:24px}}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.split img{width:100%;border-radius:16px;border:1px solid var(--line);display:block;object-fit:cover;aspect-ratio:4/3}
+@media(max-width:820px){.split{grid-template-columns:1fr}}
+.list{margin:14px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+.list li{color:var(--dim);font-size:14.5px;padding-left:20px;position:relative}
+.list li::before{content:"";position:absolute;left:0;top:9px;width:8px;height:8px;border-radius:2px;background:var(--gold)}
+.list li b{color:var(--ivory);font-weight:500}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.src{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:820px){.src{grid-template-columns:1fr}}
+.src .rc .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:0;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+@media(max-width:700px){.facts{grid-template-columns:1fr}}
+.facts div{padding:18px 20px;border-bottom:1px solid var(--line2);border-right:1px solid var(--line2);background:var(--ink2)}
+.facts dt{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin-bottom:6px}
+.facts dd{margin:0;color:var(--ivory);font-size:15px}
+.facts dd a{color:var(--gold-soft)}
+.rfq{background:linear-gradient(180deg,var(--ink2),var(--ink3));border:1px solid var(--line);border-radius:20px;padding:30px}
+.rfq form{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.rfq .full{grid-column:1/-1}
+@media(max-width:700px){.rfq form{grid-template-columns:1fr}.rfq{padding:22px}}
+.rfq label{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--dim)}
+.rfq input,.rfq select,.rfq textarea{font:inherit;font-size:15px;color:var(--ivory);background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:11px 12px}
+.rfq textarea{min-height:96px;resize:vertical}
+.rfq input:focus,.rfq select:focus,.rfq textarea:focus{outline:none;border-color:var(--gold)}
+.rfq .actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.rfq .note{font-family:var(--mono);font-size:11px;color:var(--faint)}
+.mkts{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.mk{border:1px solid var(--line);border-radius:14px;padding:18px;background:var(--ink2)}
+.mk b{display:block;font-family:var(--disp);font-size:18px;font-weight:500;margin-bottom:6px}
+.mk span{color:var(--dim);font-size:13.5px}
+
+.bhead{padding:56px 0 26px}
+.bhead h1{font-size:clamp(34px,5vw,54px);margin:14px 0 0;max-width:18ch;text-wrap:balance}
+.bhead p.lede{max-width:60ch}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:26px 0 0}
+.chip{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;color:var(--dim);border:1px solid var(--line);border-radius:999px;padding:7px 13px;background:transparent;cursor:pointer}
+.chip[aria-pressed="true"]{color:#2a1c04;background:var(--gold);border-color:var(--gold)}
+.chip:hover{border-color:var(--gold)}
+.plist{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+@media(max-width:960px){.plist{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.plist{grid-template-columns:1fr}}
+.pc{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--ink2);transition:transform .2s,border-color .2s;min-width:0}
+.pc:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--a) 50%,transparent)}
+.pc-img{height:150px;background:color-mix(in srgb,var(--a) 14%,var(--ink3));border-bottom:1px solid var(--line);overflow:hidden}
+.pc-img img{width:100%;height:100%;object-fit:cover;display:block}
+.pc-b{padding:16px 18px 18px;display:flex;flex-direction:column;gap:8px;flex:1}
+.pmeta{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);display:flex;gap:10px;flex-wrap:wrap}
+.pmeta .cat{color:var(--a)}
+.pc h2,.pc h3{font-size:19px;line-height:1.2;text-wrap:balance}
+.pc p{margin:0;color:var(--dim);font-size:13.5px;flex:1}
+.art{padding:46px 0 10px}
+.crumb{font-family:var(--mono);font-size:11.5px;color:var(--faint);letter-spacing:.04em}
+.crumb a{color:var(--dim)}.crumb a:hover{color:var(--gold)}
+.art h1{font-size:clamp(30px,4.6vw,48px);max-width:22ch;margin:16px 0 0;text-wrap:balance;line-height:1.08}
+.art .lede{max-width:64ch}
+.art-hero{margin:28px 0 0;border-radius:18px;overflow:hidden;border:1px solid var(--line);max-width:920px}
+.art-hero img{width:100%;aspect-ratio:21/9;object-fit:cover;display:block}
+.prose{max-width:68ch;margin:34px 0 0;font-size:16.5px;line-height:1.72;color:var(--ivory)}
+.prose h2{font-size:clamp(23px,2.6vw,29px);margin:42px 0 12px;line-height:1.15;text-wrap:balance}
+.prose h3{font-family:var(--ui);font-weight:600;font-size:17.5px;margin:28px 0 8px;letter-spacing:0}
+.prose p{margin:0 0 16px;color:color-mix(in srgb,var(--ivory) 88%,var(--dim))}
+.prose ul,.prose ol{margin:0 0 18px;padding-left:22px}
+.prose li{margin:0 0 7px}
+.prose li::marker{color:var(--gold)}
+.prose strong{color:var(--ivory);font-weight:600}
+.prose a{color:var(--gold-soft);text-decoration:underline;text-underline-offset:3px}
+.prose code{font-family:var(--mono);font-size:.9em}
+.tbl{overflow-x:auto;margin:6px 0 22px;border:1px solid var(--line);border-radius:12px}
+.prose table{border-collapse:collapse;width:100%;font-size:14px;line-height:1.45;min-width:520px}
+.prose th{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:500;text-align:left;background:var(--ink3);padding:10px 12px;border-bottom:1px solid var(--line)}
+.prose td{padding:10px 12px;border-bottom:1px solid var(--line2);vertical-align:top;color:var(--dim)}
+.prose tr:last-child td{border-bottom:none}
+.prose blockquote{margin:0 0 18px;padding:12px 18px;border-left:3px solid var(--gold);background:var(--ink2);border-radius:0 10px 10px 0;color:var(--dim)}
+.endcta{max-width:68ch;margin:36px 0 0;border:1px solid color-mix(in srgb,var(--gold) 30%,transparent);border-radius:16px;padding:22px 22px;background:linear-gradient(180deg,color-mix(in srgb,var(--gold) 8%,var(--ink2)),var(--ink));display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between}
+.endcta p{margin:0;color:var(--dim);font-size:14.5px;max-width:44ch}
+.endcta b{display:block;color:var(--ivory);font-family:var(--disp);font-weight:500;font-size:19px;margin-bottom:4px}
+.endcta .cta-row{margin:0}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="wrap"><a class="brand" href="index.html"><b>DEL<span>x</span>Port</b><small>Just Live Trade</small></a><nav class="nav"><a class="" href="delxport-rice.html">Rice</a>
+      <a class="" href="delxport-pulses.html">Pulses</a>
+      <a class="" href="delxport-spices.html">Spices</a>
+      <a class="" href="delxport-fresh.html">Fresh by air</a>
+      <a class="" href="delxport-groceries.html">Groceries</a>
+      <a class="" href="delxport-hotels.html">Hotel containers</a>
+      <a class="" href="delxport-private-label.html">Private label</a>
+      <a class="here" href="blog.html">Blog</a>
+      <a class="" href="about.html">Company</a><a class="wa-btn" href="https://wa.me/918700920040?text=Hi%20DELxPort%2C%20I%20read%20your%20article%20%22How%20to%20Read%20a%20Basmati%20Spec%20Sheet%3A%20AGL%2C%20Broken%20%25%2C%20Moisture%20and%20Purity%22%20and%20I%27d%20like%20a%20quote." target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1 0 12 2Z"/></svg>WhatsApp us</a></nav></div><div class="mnav"><a class="" href="delxport-rice.html">Rice</a><a class="" href="delxport-pulses.html">Pulses</a><a class="" href="delxport-spices.html">Spices</a><a class="" href="delxport-fresh.html">Fresh by air</a><a class="" href="delxport-groceries.html">Groceries</a><a class="" href="delxport-hotels.html">Hotel containers</a><a class="" href="delxport-private-label.html">Private label</a><a class="here" href="blog.html">Blog</a><a class="" href="about.html">Company</a></div><style>.mnav{display:none}@media(max-width:920px){.mnav{display:flex;gap:18px;overflow-x:auto;padding:0 16px 12px;scrollbar-width:none;white-space:nowrap}.mnav::-webkit-scrollbar{display:none}.mnav a{font-size:13px;color:var(--dim)}.mnav a.here{color:var(--gold)}}</style></header>
+<main id="top">
+<article class="art" style="--a:#E3A230"><div class="wrap">
+<div class="crumb"><a href="blog.html">Blog</a> / <span style="color:var(--a)">Rice</span></div>
+<h1>How to Read a Basmati Spec Sheet: AGL, Broken %, Moisture and Purity</h1>
+<p class="lede">Read a basmati rice spec sheet line by line: average grain length, moisture, broken, damaged, chalky and admixture limits, and what to put in the contract.</p>
+<div class="pmeta" style="margin-top:16px"><span class="cat" style="color:var(--a)">Rice</span><span><time datetime="2023-01-17">17 Jan 2023</time></span><span>6 min read</span><span>DELxPort</span></div>
+<div class="art-hero"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3COey9TQXT8fwwejrBHeAmLOm7d/hf_20261022_052237_3ac77647-6541-493d-b7a5-ca57a956819b_min.webp" alt="" loading="eager" onerror="this.parentNode.remove()"></div>
+<div class="prose"><p>After reading this you will be able to go through a basmati spec sheet line by line, see which numbers matter for your market, and know what to write into the contract so the rice that lands matches the sample you approved.</p>
+<h2>What a spec sheet is for</h2>
+<p>A spec sheet describes the lot the mill will pack for you. It should agree with the pre-shipment sample and with the contract. If a parameter is not written down, you have nothing to claim against when the container arrives.</p>
+<p>A typical sheet for milled basmati covers:</p>
+<ul>
+<li>Variety, processing type and crop year</li>
+<li>Average grain length (AGL) and cooking results</li>
+<li>Moisture</li>
+<li>Broken grains</li>
+<li>Damaged and discoloured grains</li>
+<li>Chalky and immature grains</li>
+<li>Purity and admixture</li>
+<li>Foreign matter</li>
+</ul>
+<p>Here is how to read each line.</p>
+<h2>Variety, processing and crop year</h2>
+<p>The top of the sheet should name the variety (for example Pusa Basmati 1121, 1509, 1401 or a traditional type), the processing (raw, steam, golden sella, white sella) and the crop year.</p>
+<p>Get the crop year in writing. Basmati is normally aged before sale. Aged rice cooks drier and elongates better than fresh-milled new crop, and old crop and new crop of the same variety trade at different prices.</p>
+<h2>Average grain length (AGL)</h2>
+<p>AGL is the mean length of whole milled kernels before cooking, in millimetres. It is usually the first number a buyer looks at.</p>
+<ul>
+<li><strong>How it is measured.</strong> A count of whole grains is measured with a gauge or an image analyser. Broken pieces are left out.</li>
+<li><strong>What it hides.</strong> AGL is an average. A lot quoted at 8.30 mm can still contain a share of short grains. If uniformity matters, ask for a minimum length or the share of grains below a cut-off.</li>
+<li><strong>Reference points.</strong> India's criteria for notifying a variety as basmati set a minimum average milled length of 6.61 mm and a length-to-breadth ratio of at least 3.5. Extra-long varieties such as 1121 are commonly offered at around 8.2 mm and above. Traditional types are shorter.</li>
+</ul>
+<p>Look for <strong>cooked length</strong> and <strong>elongation ratio</strong> (cooked length divided by raw length) on the same sheet. These tell you more about how the rice will look on the plate than raw length alone.</p>
+<h3>New Indian standard</h3>
+<p>In January 2023 FSSAI notified India's first regulatory standard for basmati, applying from 1 August 2023. It covers brown, milled, parboiled brown and milled parboiled basmati. For milled basmati it sets an average raw length of at least 6.61 mm, cooked length of at least 12 mm, and an elongation ratio of at least 1.7 (1.5 for parboiled). It also caps moisture, damaged grains, uric acid and non-basmati content, and bars artificial colour, polishing agents and artificial fragrance. Expect Indian mills to align their sheets with it over the coming months.</p>
+<h2>Moisture</h2>
+<p>Moisture affects net weight, cooking and how the rice survives a long voyage. Wet rice in a sealed container can bring condensation, mould and odour.</p>
+<p>The Codex standard for rice sets 15% as the maximum and notes that lower limits may be needed for long transport or hot climates. Basmati export contracts commonly specify less than that. Ask which method was used: oven drying and handheld moisture meters can give different readings.</p>
+<h2>Broken grains</h2>
+<p>Broken % is the share by weight of kernel pieces shorter than a set fraction of a whole grain. A common definition is less than three-quarters of the average whole kernel, but contracts vary. Write the definition into yours.</p>
+<p>Premium retail packs are usually specified with a low broken allowance. Food-service and lower-priced grades accept more. Breakage rises with over-drying of paddy, aggressive polishing and rough handling, so ask whether the lot has been graded after milling.</p>
+<h2>Damaged and discoloured grains (D/D)</h2>
+<ul>
+<li><strong>Damaged:</strong> kernels harmed by insects, heat, moisture or disease.</li>
+<li><strong>Discoloured:</strong> yellow, red-streaked, black-tipped or spotted grains.</li>
+</ul>
+<p>Mills often report the two together as "D/D" with one maximum. Colour sorters (sortex machines) remove most of these. Ask whether the lot is single or double sortexed.</p>
+<p>For sella rice the whole lot is cream or golden by design. Here "discoloured" means grains noticeably darker than the rest.</p>
+<h2>Chalky and immature grains</h2>
+<p>A chalky grain has an opaque, floury white patch. It looks dull, breaks more easily and can turn soft in cooking. Immature grains are thin, greenish or underdeveloped.</p>
+<p>Parboiling gelatinises the starch and makes the grain translucent, so the chalky line matters most on raw and steam rice.</p>
+<h2>Purity and admixture</h2>
+<p>Purity is the share of the declared variety. Admixture is everything else: other basmati varieties and, more seriously, non-basmati long-grain rice. Admixture is hard to see by eye when grain shapes are similar. DNA testing is the standard check.</p>
+<p>Three rule sets are useful reference points:</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Rule</th>
+<th>Non-basmati allowance</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UK Code of Practice on basmati</td>
+<td>Up to 7%</td>
+<td>Revised code in force from 1 January 2023, with an updated list of approved varieties</td>
+</tr>
+<tr>
+<td>FSSAI basmati standard (India)</td>
+<td>Up to 15%</td>
+<td>Applies from 1 August 2023</td>
+</tr>
+<tr>
+<td>EU duty concession for husked basmati</td>
+<td>Up to 5% other rice</td>
+<td>Applies only to a listed set of varieties</td>
+</tr>
+</tbody>
+</table></div>
+<p>A commercial spec sheet should state a minimum purity for the declared variety. Ask whether it is backed by a DNA test on the actual lot.</p>
+<h2>Foreign matter</h2>
+<p>This covers stones, husk, paddy grains, straw and other seeds. The Codex rice standard caps inorganic matter (stones, sand, dust) at 0.1% and other organic matter at 0.5% for milled rice. Good basmati lots are usually far cleaner than these limits. Some buyers also specify paddy grains per kilogram.</p>
+<h2>How a sheet might look</h2>
+<p>The figures below show layout only. They are not a standard.</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Example entry</th>
+<th>Ask</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Variety / processing</td>
+<td>PB 1121 steam, crop 2022</td>
+<td>Aged how long?</td>
+</tr>
+<tr>
+<td>AGL (raw)</td>
+<td>8.30 mm min</td>
+<td>Whole grains only? Method?</td>
+</tr>
+<tr>
+<td>Cooked length</td>
+<td>Stated in mm</td>
+<td>Cooking method used</td>
+</tr>
+<tr>
+<td>Moisture</td>
+<td>Stated % max</td>
+<td>Oven or meter?</td>
+</tr>
+<tr>
+<td>Broken</td>
+<td>Stated % max</td>
+<td>Definition of broken</td>
+</tr>
+<tr>
+<td>D/D</td>
+<td>Stated % max</td>
+<td>Single or double sortex</td>
+</tr>
+<tr>
+<td>Chalky / immature</td>
+<td>Stated % max</td>
+<td></td>
+</tr>
+<tr>
+<td>Purity</td>
+<td>Stated % min</td>
+<td>DNA tested?</td>
+</tr>
+<tr>
+<td>Foreign matter</td>
+<td>Nil or stated max</td>
+<td>Paddy grains per kg</td>
+</tr>
+</tbody>
+</table></div>
+<h2>Sample against shipment</h2>
+<p>The spec sheet is only as good as the sample behind it. Agree a sealed reference sample before you confirm. Keep one, let the mill keep one. If the order is large, appoint an independent surveyor to draw and test samples at stuffing and to seal the container. Then do your own cook test on the shipped lot using the method your customers use.</p>
+<h2>Before you order</h2>
+<ul>
+<li>Variety, processing type and crop year stated in writing</li>
+<li>AGL with method and whether brokens are excluded</li>
+<li>Cooked length and elongation ratio</li>
+<li>Moisture maximum and test method</li>
+<li>Definition and maximum for broken grains</li>
+<li>D/D, chalky and immature limits</li>
+<li>Minimum purity, with DNA test if your market requires it</li>
+<li>Foreign matter limit</li>
+<li>Sealed reference sample held by both sides</li>
+<li>Inspection at loading for larger lots</li>
+</ul>
+<p>If you're sourcing basmati, send us the variety, processing type, the spec lines that matter to you, pack size and destination port. We'll come back with a written quote and a matching sample from our partner mills in Haryana.</p></div>
+<div class="endcta"><div><b>Basmati &amp; rice</b><p>Grades, packing and how we ship it from Delhi, or send us your spec for a written quote.</p></div>
+<div class="cta-row"><a class="btn btn-ghost" href="delxport-rice.html">See the range ›</a><a class="wa-btn" href="https://wa.me/918700920040?text=Hi%20DELxPort%2C%20I%20read%20your%20article%20%22How%20to%20Read%20a%20Basmati%20Spec%20Sheet%3A%20AGL%2C%20Broken%20%25%2C%20Moisture%20and%20Purity%22%20and%20I%27d%20like%20a%20quote." target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1 0 12 2Z"/></svg>Ask on WhatsApp</a></div></div>
+</div></article>
+<section class="section"><div class="wrap"><div class="sec-head"><h2>More from the blog</h2><p><a href="blog.html" style="color:var(--gold-soft)">All articles ›</a></p></div>
+<div class="plist"><a class="pc" href="blog-ramadan-2026-demand-planning-gulf-importers.html" data-cat="Rice" style="--a:#E3A230"><div class="pc-img"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3COey9TQXT8fwwejrBHeAmLOm7d/hf_20261022_052237_3ac77647-6541-493d-b7a5-ca57a956819b_min.webp" alt="" loading="lazy" onerror="this.remove()"></div><div class="pc-b"><span class="pmeta"><span class="cat">Rice</span><span>16 Dec 2025</span><span>5 min read</span></span><h3>Ramadan 2026 planning for Gulf importers: rice, pulses, fresh produce</h3><p>When to contract Indian rice, pulses and fresh produce for Ramadan 2026, expected around 18 February: shipping timelines, RCAC rules and stock-building.</p></div></a><a class="pc" href="blog-rice-export-bag-types-pp-bopp-jute-non-woven-pouch.html" data-cat="Rice" style="--a:#E3A230"><div class="pc-img"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3COey9TQXT8fwwejrBHeAmLOm7d/hf_20261022_052237_3ac77647-6541-493d-b7a5-ca57a956819b_min.webp" alt="" loading="lazy" onerror="this.remove()"></div><div class="pc-b"><span class="pmeta"><span class="cat">Rice</span><span>15 Jul 2025</span><span>5 min read</span></span><h3>Rice Bags for Export: PP Woven, BOPP, Jute, Non-Woven or Retail Pouch</h3><p>Compare PP woven, BOPP laminated, jute, non-woven and retail pouch bags for export rice: strength, print, moisture, cost drivers and when to use each.</p></div></a><a class="pc" href="blog-pesticide-residues-mrl-basmati-spices-importers.html" data-cat="Rice" style="--a:#E3A230"><div class="pc-img"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3COey9TQXT8fwwejrBHeAmLOm7d/hf_20261022_052237_3ac77647-6541-493d-b7a5-ca57a956819b_min.webp" alt="" loading="lazy" onerror="this.remove()"></div><div class="pc-b"><span class="pmeta"><span class="cat">Rice</span><span>21 May 2024</span><span>5 min read</span></span><h3>Pesticide Residues on Basmati and Spices: What to Ask Your Supplier</h3><p>What residue reports to ask an Indian basmati or spice supplier for: lab accreditation, reporting limits, EU tricyclazole at 0.01 mg/kg, EtO, and Gulf rules.</p></div></a></div></div></section>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "How to Read a Basmati Spec Sheet: AGL, Broken %, Moisture and Purity", "description": "Read a basmati rice spec sheet line by line: average grain length, moisture, broken, damaged, chalky and admixture limits, and what to put in the contract.", "datePublished": "2023-01-17", "dateModified": "2023-01-17", "author": {"@type": "Organization", "name": "DELxPort"}, "publisher": {"@type": "Organization", "name": "DELxPort", "url": "https://delxport.com"}, "mainEntityOfPage": "https://delxport.com/blog-read-basmati-rice-spec-sheet.html", "articleSection": "Rice", "wordCount": 1215}</script>
+</main>
+<footer class="foot"><div class="wrap">
+  <div><a class="brand" href="index.html"><b>DEL<span style="color:var(--gold)">x</span>Port</b><small>Just Live Trade</small></a>
+    <p class="fmeta" style="margin-top:14px"><b>Indian agri-export from Delhi</b> — by sea and by air.<br>Rice · Pulses · Spices · Fresh produce &amp; flowers · Groceries · Hotel containers · Private label.</p></div>
+  <div class="fmeta"><b>Company</b><br>Reg. office: Vill Chapparauli Bangar, Sector 168, Noida, Uttar Pradesh 201304, India<br>DGFT Importer-Exporter Code (IEC): <b>ANMPM2144G</b><br>APEDA registered exporter</div>
+  <div class="fmeta"><b>Contact</b><br><a href="mailto:trade@delxport.com">trade@delxport.com</a><br><a href="https://wa.me/918700920040?text=Hi%20DELxPort" target="_blank" rel="noopener">WhatsApp +91 87009 20040</a><br><a href="about.html#rfq">Request a quote ›</a></div>
+  <div class="fnav"><a href="delxport-rice.html">Rice</a><a href="delxport-pulses.html">Pulses</a><a href="delxport-spices.html">Spices</a><a href="delxport-fresh.html">Fresh by air</a><a href="delxport-groceries.html">Groceries</a><a href="delxport-hotels.html">Hotel containers</a><a href="delxport-private-label.html">Private label</a><a href="blog.html">Blog</a><a href="about.html">Company</a></div>
+</div>
+<div class="foot-legal"><p class="rec"><b>Recording &amp; privacy.</b> For order accuracy and to settle any dispute, DELxPort keeps a written record of the quotes, specifications, messages and shipping documents exchanged on your order. Calls and video calls are recorded only with your consent, which we ask for at the start of each call. Your records are used solely to fulfil and document your order, are never sold or shared with third parties, and are kept for the duration of the trade relationship plus any period required by law. You can request a copy of your records, or their deletion, at any time.</p>
+<p class="cw">© 2026 DELxPort · Just Live Trade · DGFT IEC <b>ANMPM2144G</b> · Origin: India. Payment: 100% advance, or irrevocable L/C released against loading documents. Rates are quoted per order and confirmed in writing; specifications are confirmed per lot.</p></div></footer>
+</body>
+</html>
